@@ -119,9 +119,21 @@ def method_not_allowed():
 def teapot():
     return '<h1>418 - Я чайник</h1><p>Сервер отказывается варить кофе</p>', 418
 
+error_log = []
+
+
 @app.errorhandler(404)
 def not_found(error):
-    image_path = url_for('static', filename='ошибка.jpg')
+    client_ip = request.remote_addr
+    access_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    requested_url = request.url
+    user_agent = request.headers.get('User-Agent', 'Неизвестно')
+
+    log_entry = f"{access_time}, пользователь {client_ip} зашёл на адрес: {requested_url}"
+    error_log.append(log_entry)
+
+    if len(error_log) > 20:
+        error_log.pop(0)
     
     return f'''
     <!DOCTYPE html>
@@ -130,16 +142,80 @@ def not_found(error):
         <meta charset="UTF-8">
         <title>Страница не найдена</title>
         <style>
-            body {{ font-family: Arial, sans-serif; text-align: center; margin: 50px; }}
-            .error {{ color: #d9534f; }}
+            body {{
+                font-family: Arial, sans-serif;
+                text-align: center;
+                margin: 50px;
+                background-color: #f8f9fa;
+            }}
+            .error {{
+                color: #d9534f;
+                font-size: 2.5em;
+                margin-bottom: 20px;
+            }}
+            .info {{
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                margin: 20px auto;
+                max-width: 600px;
+                text-align: left;
+            }}
+            .journal {{
+                background-color: #f8f9fa;
+                padding: 15px;
+                border-radius: 5px;
+                margin: 20px auto;
+                max-width: 800px;
+                text-align: left;
+                font-family: monospace;
+                font-size: 0.9em;
+            }}
+            .journal-entry {{
+                margin: 5px 0;
+                padding: 5px;
+                border-bottom: 1px solid #ddd;
+            }}
+            .journal-entry:last-child {{
+                border-bottom: none;
+            }}
+            a {{
+                color: #007bff;
+                text-decoration: none;
+                font-weight: bold;
+            }}
+            a:hover {{
+                text-decoration: underline;
+            }}
+            img {{
+                max-width: 300px;
+                margin: 20px;
+                border-radius: 10px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            }}
         </style>
     </head>
     <body>
         <h1 class="error">404 - Страница не найдена</h1>
-        <p>Запрашиваемая страница не существует.</p>
-        <img src="{image_path}" alt="Ошибка 404" width="500">
+        
+        <div class="info">
+            <p>Запрашиваемая страница не существует.</p>
+            <p><strong>Ваш IP-адрес:</strong> {client_ip}</p>
+            <p><strong>Время доступа:</strong> {access_time}</p>
+            <p><strong>Запрошенный URL:</strong> {requested_url}</p>
+            <p><strong>Браузер:</strong> {user_agent}</p>
+        </div>
+
+        <img src="{url_for('static', filename='ошибка.jpg')}" alt="Ошибка 404">
         <br>
+        
         <a href="/">Вернуться на главную</a>
+        
+        <div class="journal">
+            <h3>Журнал обращений (последние 20 записей):</h3>
+            {"".join([f'<div class="journal-entry">{entry}</div>' for entry in error_log[::-1]])}
+        </div>
     </body>
     </html>
     ''', 404
