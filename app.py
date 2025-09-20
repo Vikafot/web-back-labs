@@ -156,22 +156,27 @@ def image():
     image_path = url_for('static', filename='кот.jpg')
     css_path = url_for('static', filename='lab1.css')
     
-    return f'''
+    html_content = f'''
     <!DOCTYPE html>
     <html lang="ru">
     <head>
         <meta charset="UTF-8">
         <title>Кот</title>
-        <link rel="stylesheet" href="{css_path}"> 
+        <link rel="stylesheet" href="{css_path}">
     </head>
     <body>
         <h1>Кот</h1>
-        <img src="{image_path}" alt="Дуб">
+        <img src="{image_path}" alt="Кот">
         <br>
         <a href="/lab1/web">На главную</a>
     </body>
     </html>
     '''
+    return html_content, 200, {
+        'Content-Language': 'ru',
+        'X-Custom-Header': 'MyValue',
+        'X-Another-Header': 'Test'
+    }
 
 
 count = 0
