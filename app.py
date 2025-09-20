@@ -29,18 +29,27 @@ def author():
                </body>
             </html>"""
 
-@app.route('/image')
+@app.route('/lab1/image')
 def image():
-    path = url_for("static", filename="кот.jpg")
-    return '''
-<!doctype html>
-<html>
-   <body>
-     <h1>Кот</h1>
-     <img src="''' + path + '''">
-   </body>
-</html>
-'''
+    image_path = url_for('static', filename='кот.jpg')
+    css_path = url_for('static', filename='lab1.css')
+    
+    return f'''
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <title>Кот</title>
+        <link rel="stylesheet" href="{css_path}"> 
+    </head>
+    <body>
+        <h1>Кот</h1>
+        <img src="{image_path}" alt="Дуб">
+        <br>
+        <a href="/lab1/web">На главную</a>
+    </body>
+    </html>
+    '''
 
 count = 0
 
