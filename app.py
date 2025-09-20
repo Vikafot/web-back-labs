@@ -128,6 +128,29 @@ def not_found(error):
     </html>
     ''', 404
 
+
+@app.route('/lab1/error')
+def generate_error():
+    result = 1 / 0
+    return "Эта строка никогда не будет выполнена"
+
+@app.errorhandler(500)
+def internal_error(error):
+    return '''
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <title>Ошибка сервера</title>
+    </head>
+    <body>
+        <h1>500 - Внутренняя ошибка сервера</h1>
+        <p>Произошла непредвиденная ошибка на сервере.</p>
+        <a href="/">Вернуться на главную</a>
+    </body>
+    </html>
+    ''', 500
+
 @app.route('/lab1/image')
 def image():
     image_path = url_for('static', filename='кот.jpg')
