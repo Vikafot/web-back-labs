@@ -29,6 +29,34 @@ def author():
                </body>
             </html>"""
 
+@app.route('/')
+@app.route('/index')
+def index():
+    return '''
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <title>HГТУ, ФБ, Лабораторные работы</title>
+    </head>
+    <body>
+        <header>
+            <h1>HГТУ, ФБ, WEB-программирование, часть 2. Список лабораторных</h1>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="/lab1">Первая лабораторная</a></li>
+            </ul>
+        </nav>
+        
+        <footer>
+            <p>Фот Виктория Владимировна, ФБИ-33, 3 курс, 2025 год</p>
+        </footer>
+    </body>
+    </html>
+    '''
+
 
 @app.route('/lab1/image')
 def image():
