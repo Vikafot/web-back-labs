@@ -103,6 +103,31 @@ def method_not_allowed():
 def teapot():
     return '<h1>418 - Я чайник</h1><p>Сервер отказывается варить кофе</p>', 418
 
+@app.errorhandler(404)
+def not_found(error):
+    image_path = url_for('static', filename='ошибка.jpg')
+    
+    return f'''
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <title>Страница не найдена</title>
+        <style>
+            body {{ font-family: Arial, sans-serif; text-align: center; margin: 50px; }}
+            .error {{ color: #d9534f; }}
+        </style>
+    </head>
+    <body>
+        <h1 class="error">404 - Страница не найдена</h1>
+        <p>Запрашиваемая страница не существует.</p>
+        <img src="{image_path}" alt="Ошибка 404" width="500">
+        <br>
+        <a href="/">Вернуться на главную</a>
+    </body>
+    </html>
+    ''', 404
+
 @app.route('/lab1/image')
 def image():
     image_path = url_for('static', filename='кот.jpg')
@@ -184,9 +209,6 @@ def lole():
         </body>
     </html>""", 201
 
-@app.errorhandler(404)
-def not_found(err):
-    return "нет такой страницы", 404
 
 @app.route("/lol")
 def lol():
