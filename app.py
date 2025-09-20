@@ -79,6 +79,30 @@ def lab1_index():
     </html>
     '''
 
+@app.route('/lab1/400')
+def bad_request():
+    return '<h1>400 - Плохой запрос</h1><p>Сервер не может обработать запрос</p>', 400
+
+@app.route('/lab1/401')
+def unauthorized():
+    return '<h1>401 - Не авторизован</h1><p>Требуется аутентификация</p>', 401
+
+@app.route('/lab1/402')
+def payment_required():
+    return '<h1>402 - Требуется оплата</h1><p>Необходима оплата для доступа</p>', 402
+
+@app.route('/lab1/403')
+def forbidden():
+    return '<h1>403 - Запрещено</h1><p>Доступ к ресурсу запрещен</p>', 403
+
+@app.route('/lab1/405')
+def method_not_allowed():
+    return '<h1>405 - Метод не разрешен</h1><p>HTTP метод не поддерживается</p>', 405
+
+@app.route('/lab1/418')
+def teapot():
+    return '<h1>418 - Я чайник</h1><p>Сервер отказывается варить кофе</p>', 418
+
 @app.route('/lab1/image')
 def image():
     image_path = url_for('static', filename='кот.jpg')
