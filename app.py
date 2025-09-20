@@ -29,6 +29,7 @@ def author():
                </body>
             </html>"""
 
+
 @app.route('/lab1/image')
 def image():
     image_path = url_for('static', filename='кот.jpg')
@@ -51,28 +52,50 @@ def image():
     </html>
     '''
 
+
 count = 0
 
 @app.route('/counter')
 def counter():
     global count
-    count +=1
-    time = datetime.datetime.tody()
+    count += 1
+    
+
+    time = datetime.datetime.now() 
     url = request.url
     client_ip = request.remote_addr
-
+    server_name = request.host  
     return '''
 <!doctype html>
 <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Счетчик посещений</title>
+    </head>
     <body>
-         Сколько раз вы сюда заходили: ''' +str(count) + '''
-         <hr>
-         Дата и время: ''' + str(time) + '''<br>
-         Запрошенный адрес: ''' + str(url) + '''<br>
-         Ваш IP-адрес: ''' + str(client_ip) + '''<br>
+        <h1>Счетчик посещений</h1>
+        <p>Сколько раз вы сюда заходили: ''' + str(count) + '''</p>
+        <hr>
+        <p>Дата и время: ''' + str(time) + '''</p>
+        <p>Запрошенный адрес: ''' + str(url) + '''</p>
+        <p>Ваш IP-адрес: ''' + str(client_ip) + '''</p>
+        <p>Имя сервера: ''' + str(server_name) + '''</p>
+ 
+        <a href="/lab1/counter/clear">Очистить счетчик</a><br>
     </body>
 </html>
 '''
+
+@app.route('/counter/clear')
+def clear_counter():
+    global count
+    count = 0
+    return redirect('/lab1/counter')
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
 
 @app.route("/info")
 def info():
