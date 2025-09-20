@@ -69,8 +69,8 @@ def counter():
 def info():
     return redirect("/author")
 
-@app.route("/lol")
-def lol():
+@app.route("/lole")
+def lole():
     return """<!doctype html>
     <html>
        <body>
