@@ -82,3 +82,15 @@ def lole():
 @app.errorhandler(404)
 def not_found(err):
     return "нет такой страницы", 404
+
+@app.route("/lol")
+def lol():
+    return """<!doctype html>
+          <html>
+             <body>
+               <h1>web-сервер на flask</h1>
+               </body>
+            </html>""", 200, {
+                'X-Server': 'sample',
+                'Content-Type': 'text/plain; charset=utf-8'
+            }
