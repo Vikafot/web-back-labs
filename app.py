@@ -341,3 +341,11 @@ def lol():
                 'X-Server': 'sample',
                 'Content-Type': 'text/plain; charset=utf-8'
             }
+
+@app.route('/lab2/a/')
+def a():
+    return 'со слэшем'
+
+@app.route('/lab2/a')
+def a2():
+    return 'без слэша'
