@@ -20,6 +20,9 @@
         <p>3258 − 759 = {{ 3258 - 759 }}</p>
         <p>8452 / 793 = {{ 8452 / 793 }}</p>
         <p>45<sup>8</sup> = {{ 45**8 }}</p>
+        {% for f in fruits %}
+            <li>{{ loop.index }} - {{ f.name }}: {{ f.price }} &#8381;</li>
+        {% endfor %}
     </main>
     <footer>
         &copy; 
