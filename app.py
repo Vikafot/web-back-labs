@@ -456,3 +456,38 @@ def lab2():
 def filters():
  phrase = "О <b>сколько</b> <u>нам</u> <i>открытий</i> чудных..."
  return render_template('filter.html', phrase=phrase)
+
+@app.route('/lab2/calc/')
+@app.route('/lab2/calc/<int:num1>/')
+@app.route('/lab2/calc/<int:num1>/<int:num2>')
+def calculate(num1=1, num2=1):
+ add = num1 + num2
+ sub = num1 - num2
+ mul = num1 * num2
+
+ if num2 == 0:
+    div = "Ошибка: деление на ноль"
+ else:
+    div = num1 / num2
+
+ power = num1 ** num2
+
+ return f'''
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Калькулятор — {num1} и {num2}</title>
+</head>
+<body>
+    <h2>Математические операции с {num1} и {num2}</h2>
+    <ul>
+        <li>Сложение: {num1} + {num2} = {add}</li>
+        <li>Вычитание: {num1} - {num2} = {sub}</li>
+        <li>Умножение: {num1} * {num2} = {mul}</li>
+        <li>Деление: {num1} / {num2} = {div}</li>
+        <li>Возведение в степень: {num1}<sup>{num2}</sup> = {power}</li>
+    </ul>
+</body>
+</html>
+'''
