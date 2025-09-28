@@ -41,3 +41,13 @@ li {
     padding: 5px 0;
     border-bottom: 1px solid #eee;
 }
+
+th, td {
+    border: 1px solid #bdc3c7;
+    padding: 12px;
+    text-align: left;
+}
+        
+th {
+    background-color: #ecf0f1;
+}
