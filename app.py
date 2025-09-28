@@ -243,6 +243,24 @@ def internal_error(error):
     </html>
     ''', 500
 
+@app.errorhandler(400)
+def bad_request_error(error):
+    message = error.description or "Некорректный запрос"
+    return f'''
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <title>Bad request</title>
+    </head>
+    <body>
+        <h1>400 - Ошибка клиента</h1>
+        <p>{message}</p>
+        <a href="/">Вернуться на главную</a>
+    </body>
+    </html>
+    ''', 400
+
 @app.route('/lab1/image')
 def image():
     image_path = url_for('static', filename='кот.jpg')
@@ -357,7 +375,43 @@ def flowers(flower_id):
     if flower_id >= len(flower_list):
        abort(404)
     else:
-        return "цветок: " + flower_list[flower_id]
+        return f'''
+<!doctype html>
+<html>
+     <body>
+     <h1>Цветок с id {flower_id}</h1>
+     <p>{flower_list[flower_id]}</p>
+     <a href="/lab2/flowers/list">Список цвех цветов</a>
+     </body>
+</html>
+'''
+
+@app.route('/lab2/flowers/list')
+def get_flowers_list():
+    return f'''
+<!doctype html>
+<html>
+     <body>
+     <h1>Список цветов</h1>
+     <p>Полный список: {flower_list}</p>
+     <p>Всего цветов: {len(flower_list)}</p>
+     </body>
+</html>
+'''
+
+@app.route('/lab2/flowers/clear')
+def clear_flowers_list():
+    flower_list.clear()
+    return f'''
+<!doctype html>
+<html>
+     <body>
+     <h1>Очистка списка цветов</h1>
+     <p>Список цветов очищен!</p>
+     <a href="/lab2/flowers/list">Список цвех цветов</a>
+     </body>
+</html>
+'''
 
 @app.route('/lab2/add_flower/<name>')
 def add_flower(name):
@@ -373,6 +427,10 @@ def add_flower(name):
      </body>
 </html>
 '''
+
+@app.route('/lab2/add_flower/')
+def empty_flower_name():
+    abort(400, description='Вы не задали имя цветка.')
 
 @app.route('/lab2/example')
 def example():
