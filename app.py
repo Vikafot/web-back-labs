@@ -369,65 +369,45 @@ def a():
 def a2():
     return 'без слэша'
 
-flower_list = ['роза', 'тюльпан', 'незабудка', 'ромашка']
+flower_list = [
+   {'name': 'роза', 'price': '130' },
+   { 'name': 'тюльпан', 'price': '110' },
+   { 'name': 'незабудка', 'price': '95' },
+   { 'name': 'ромашка', 'price': '80' }
+]
 
 @app.route('/lab2/flowers/<int:flower_id>')
 def flowers(flower_id):
     if flower_id >= len(flower_list):
        abort(404)
     else:
-        return f'''
-<!doctype html>
-<html>
-     <body>
-     <h1>Цветок с id {flower_id}</h1>
-     <p>{flower_list[flower_id]}</p>
-     <a href="/lab2/flowers/list">Список цвех цветов</a>
-     </body>
-</html>
-'''
+        return render_template('flower-item.html',
+                               flower_id=flower_id,
+                               name=flower_list[flower_id]['name'],
+                               price=flower_list[flower_id]['price']
+                               )
 
 @app.route('/lab2/flowers/list')
 def get_flowers_list():
-    return f'''
-<!doctype html>
-<html>
-     <body>
-     <h1>Список цветов</h1>
-     <p>Полный список: {flower_list}</p>
-     <p>Всего цветов: {len(flower_list)}</p>
-     </body>
-</html>
-'''
+    return render_template('flowers-list.html', flower_list=flower_list)
 
 @app.route('/lab2/flowers/clear')
 def clear_flowers_list():
     flower_list.clear()
-    return f'''
-<!doctype html>
-<html>
-     <body>
-     <h1>Очистка списка цветов</h1>
-     <p>Список цветов очищен!</p>
-     <a href="/lab2/flowers/list">Список цвех цветов</a>
-     </body>
-</html>
-'''
+    return render_template('clear-flowers.html')
 
-@app.route('/lab2/add_flower/<name>')
-def add_flower(name):
-    flower_list.append(name)
-    return f'''
-<!doctype html>
-<html>
-     <body>
-     <h1>Добавлен новый цветок</h1>
-     <p>Название нового цветка: {name} </p>
-     <p>Всего цветов: {len(flower_list)}</p>
-     <p>Полный список: {flower_list}</p>
-     </body>
-</html>
-'''
+@app.route('/lab2/add_flower/<name>/<int:price>')
+def add_flower(name, price):
+    flower_list.append({'name': name, 'price': price})
+    return render_template('add-flowers.html', name=name, price=price)
+
+@app.route('/lab2/delete_flower/<int:id>')
+def delete_flower(id):
+    if id < 0 or id >= len(flower_list):
+        abort(404)
+    else:
+        del flower_list[id]
+    return redirect('/lab2/flowers/list')
 
 @app.route('/lab2/add_flower/')
 def empty_flower_name():
