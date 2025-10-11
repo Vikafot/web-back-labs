@@ -1,33 +1,13 @@
-from flask import Flask, url_for, request, redirect, abort, render_template
+from flask import Flask, render_template, request, make_response, redirect, url_for, abort
 import datetime
+
+from lab1 import lab1
+from lab2 import lab2
+
 app = Flask(__name__)
 
-@app.route("/")
-@app.route('/lab1/web')
-def web():
-    return """<!doctype html> \
-    <html> \
-        <body> \
-            <h1>web-сервер на flask</h1> \
-            <a href="/author">author</a> \
-        </body> \
-    </html>"""
-
-@app.route('/lab1/author')
-def author():
-    name = "Фот Виктория Владимировна"
-    group = "ФБИ-33"
-    faculty = "ФБ"
-    
-    return """<!doctype html>
-          <html>
-             <body>
-              <p>Студент: """ + name + """</p>
-              <p>Группа: """ + group + """</p>
-               <p>Факультет: """ + faculty + """</p>
-               <a href="/web">web</a>
-               </body>
-            </html>"""
+app.register_blueprint(lab1)
+app.register_blueprint(lab2)
 
 @app.route('/')
 @app.route('/index')
@@ -43,85 +23,19 @@ def index():
         <header>
             <h1>HГТУ, ФБ, WEB-программирование, часть 2. Список лабораторных</h1>
         </header>
-        
         <nav>
             <ul>
                 <li><a href="/lab1">Первая лабораторная</a></li>
                 <li><a href="/lab2">Вторая лабораторная</a></li>
+                <li><a href="/lab3">Третья лабораторная</a></li>
             </ul>
         </nav>
-        
         <footer>
             <p>Фот Виктория Владимировна, ФБИ-33, 3 курс, 2025 год</p>
         </footer>
     </body>
     </html>
     '''
-
-@app.route('/lab1')
-def lab1_index():
-    return '''
-    <!DOCTYPE html>
-    <html lang="ru">
-    <head>
-        <meta charset="UTF-8">
-        <title>Лабораторная 1</title>
-    </head>
-    <body>
-        <h1>Лабораторная 1</h1>
-        
-        <p>Flask — фреймворк для создания веб-приложений на языке программирования Python, 
-        использующий набор инструментов Werkzeug, а также шаблонизатор Jinja2. 
-        Относится к категории так называемых микрофреймворков — минималистичных каркасов 
-        веб-приложений, сознательно предоставляющих лишь самые базовые возможности.</p>
-        
-        <a href="/index">На главную</a>
-        
-        <h2>Список роутов лабораторной работы 1</h2>
-        <ul>
-            <li><a href="/lab1/web">Главная страница лабораторной</a></li>
-            <li><a href="/lab1/author">Информация об авторе</a></li>
-            <li><a href="/lab1/image">Страница с изображением кота</a></li>
-            <li><a href="/lab1/counter">Счетчик посещений</a></li>
-            <li><a href="/lab1/info">Перенаправление на автора</a></li>
-            <li><a href="/lab1/error">Генерация ошибки 500</a></li>
-            <li><a href="/lab1/400">Тест кода 400 - Плохой запрос</a></li>
-            <li><a href="/lab1/401">Тест кода 401 - Не авторизован</a></li>
-            <li><a href="/lab1/402">Тест кода 402 - Требуется оплата</a></li>
-            <li><a href="/lab1/403">Тест кода 403 - Запрощено</a></li>
-            <li><a href="/lab1/405">Тест кода 405 - Метод не разрешен</a></li>
-            <li><a href="/lab1/418">Тест кода 418 - Я чайник</a></li>
-        </ul>
-    </body>
-    </html>
-    '''
-
-@app.route('/lab1/400')
-def bad_request():
-    return '<h1>400 - Плохой запрос</h1><p>Сервер не может обработать запрос</p>', 400
-
-@app.route('/lab1/401')
-def unauthorized():
-    return '<h1>401 - Не авторизован</h1><p>Требуется аутентификация</p>', 401
-
-@app.route('/lab1/402')
-def payment_required():
-    return '<h1>402 - Требуется оплата</h1><p>Необходима оплата для доступа</p>', 402
-
-@app.route('/lab1/403')
-def forbidden():
-    return '<h1>403 - Запрещено</h1><p>Доступ к ресурсу запрещен</p>', 403
-
-@app.route('/lab1/405')
-def method_not_allowed():
-    return '<h1>405 - Метод не разрешен</h1><p>HTTP метод не поддерживается</p>', 405
-
-@app.route('/lab1/418')
-def teapot():
-    return '<h1>418 - Я чайник</h1><p>Сервер отказывается варить кофе</p>', 418
-
-error_log = []
-
 
 @app.errorhandler(404)
 def not_found(error):
@@ -131,526 +45,40 @@ def not_found(error):
     user_agent = request.headers.get('User-Agent', 'Неизвестно')
 
     log_entry = f"{access_time}, пользователь {client_ip} зашёл на адрес: {requested_url}"
-    error_log.append(log_entry)
+    if not hasattr(app, 'error_log'):
+        app.error_log = []
+    app.error_log.append(log_entry)
+    if len(app.error_log) > 20:
+        app.error_log.pop(0)
 
-    if len(error_log) > 20:
-        error_log.pop(0)
-    
     return f'''
     <!DOCTYPE html>
     <html lang="ru">
-    <head>
-        <meta charset="UTF-8">
-        <title>Страница не найдена</title>
-        <style>
-            body {{
-                font-family: Arial, sans-serif;
-                text-align: center;
-                margin: 50px;
-                background-color: #f8f9fa;
-            }}
-            .error {{
-                color: #d9534f;
-                font-size: 2.5em;
-                margin-bottom: 20px;
-            }}
-            .info {{
-                background-color: #fff;
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                margin: 20px auto;
-                max-width: 600px;
-                text-align: left;
-            }}
-            .journal {{
-                background-color: #f8f9fa;
-                padding: 15px;
-                border-radius: 5px;
-                margin: 20px auto;
-                max-width: 800px;
-                text-align: left;
-                font-family: monospace;
-                font-size: 0.9em;
-            }}
-            .journal-entry {{
-                margin: 5px 0;
-                padding: 5px;
-                border-bottom: 1px solid #ddd;
-            }}
-            .journal-entry:last-child {{
-                border-bottom: none;
-            }}
-            a {{
-                color: #007bff;
-                text-decoration: none;
-                font-weight: bold;
-            }}
-            a:hover {{
-                text-decoration: underline;
-            }}
-            img {{
-                max-width: 300px;
-                margin: 20px;
-                border-radius: 10px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            }}
-        </style>
-    </head>
+    <head><meta charset="UTF-8"><title>Страница не найдена</title></head>
     <body>
-        <h1 class="error">404 - Страница не найдена</h1>
-        
-        <div class="info">
-            <p>Запрашиваемая страница не существует.</p>
-            <p><strong>Ваш IP-адрес:</strong> {client_ip}</p>
-            <p><strong>Время доступа:</strong> {access_time}</p>
-            <p><strong>Запрошенный URL:</strong> {requested_url}</p>
-            <p><strong>Браузер:</strong> {user_agent}</p>
-        </div>
-
-        <img src="{url_for('static', filename='ошибка.jpg')}" alt="Ошибка 404">
-        <br>
-        
-        <a href="/">Вернуться на главную</a>
-        
-        <div class="journal">
-            <h3>Журнал обращений (последние 20 записей):</h3>
-            {"".join([f'<div class="journal-entry">{entry}</div>' for entry in error_log[::-1]])}
-        </div>
+        <h1>404 - Страница не найдена</h1>
+        <p>IP: {client_ip}, время: {access_time}, URL: {requested_url}</p>
+        <a href="/">На главную</a>
+        <h3>Журнал (последние 20):</h3>
+        <pre>{'<br>'.join(reversed(app.error_log))}</pre>
     </body>
     </html>
     ''', 404
 
-
-@app.route('/lab1/error')
-def generate_error():
-    result = 1 / 0
-    return "Эта строка никогда не будет выполнена"
 
 @app.errorhandler(500)
 def internal_error(error):
     return '''
     <!DOCTYPE html>
     <html lang="ru">
-    <head>
-        <meta charset="UTF-8">
-        <title>Ошибка сервера</title>
-    </head>
+    <head><meta charset="UTF-8"><title>Ошибка сервера</title></head>
     <body>
         <h1>500 - Внутренняя ошибка сервера</h1>
-        <p>Произошла непредвиденная ошибка на сервере.</p>
-        <a href="/">Вернуться на главную</a>
+        <a href="/">На главную</a>
     </body>
     </html>
     ''', 500
 
-@app.errorhandler(400)
-def bad_request_error(error):
-    message = error.description or "Некорректный запрос"
-    return f'''
-    <!DOCTYPE html>
-    <html lang="ru">
-    <head>
-        <meta charset="UTF-8">
-        <title>Bad request</title>
-    </head>
-    <body>
-        <h1>400 - Ошибка клиента</h1>
-        <p>{message}</p>
-        <a href="/index">Вернуться на главную</a>
-    </body>
-    </html>
-    ''', 400
-
-@app.route('/lab1/image')
-def image():
-    image_path = url_for('static', filename='кот.jpg')
-    css_path = url_for('static', filename='lab1.css')
-    
-    html_content = f'''
-    <!DOCTYPE html>
-    <html lang="ru">
-    <head>
-        <meta charset="UTF-8">
-        <title>Кот</title>
-        <link rel="stylesheet" href="{css_path}">
-    </head>
-    <body>
-        <h1>Кот</h1>
-        <img src="{image_path}" alt="Кот">
-        <br>
-        <a href="/lab1/web">На главную</a>
-    </body>
-    </html>
-    '''
-    return html_content, 200, {
-        'Content-Language': 'ru',
-        'X-Custom-Header': 'MyValue',
-        'X-Another-Header': 'Test'
-    }
-
-
-count = 0
-
-@app.route('/lab1/counter')
-def counter():
-    global count
-    count += 1
-    
-
-    time = datetime.datetime.now() 
-    url = request.url
-    client_ip = request.remote_addr
-    server_name = request.host  
-    return '''
-<!doctype html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Счетчик посещений</title>
-    </head>
-    <body>
-        <h1>Счетчик посещений</h1>
-        <p>Сколько раз вы сюда заходили: ''' + str(count) + '''</p>
-        <hr>
-        <p>Дата и время: ''' + str(time) + '''</p>
-        <p>Запрошенный адрес: ''' + str(url) + '''</p>
-        <p>Ваш IP-адрес: ''' + str(client_ip) + '''</p>
-        <p>Имя сервера: ''' + str(server_name) + '''</p>
- 
-        <a href="/lab1/counter/clear">Очистить счетчик</a><br>
-    </body>
-</html>
-'''
-
-@app.route('/counter/clear')
-def clear_counter():
-    global count
-    count = 0
-    return redirect('/lab1/counter')
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-
-@app.route('/lab1/info')
-def info():
-    return redirect('/lab1/author')
-
-@app.route("/lole")
-def lole():
-    return """<!doctype html>
-    <html>
-       <body>
-          <h1>Создано успешно</h1>
-          <div><i>что-то создано...</i></div>
-        </body>
-    </html>""", 201
-
-
-@app.route("/lol")
-def lol():
-    return """<!doctype html>
-          <html>
-             <body>
-               <h1>web-сервер на flask</h1>
-               </body>
-            </html>""", 200, {
-                'X-Server': 'sample',
-                'Content-Type': 'text/plain; charset=utf-8'
-            }
-
-@app.route('/lab2/a/')
-def a():
-    return 'со слэшем'
-
-@app.route('/lab2/a')
-def a2():
-    return 'без слэша'
-
-flower_list = [
-   {'name': 'роза', 'price': '130' },
-   { 'name': 'тюльпан', 'price': '110' },
-   { 'name': 'незабудка', 'price': '95' },
-   { 'name': 'ромашка', 'price': '80' }
-]
-
-@app.route('/lab2/flowers/<int:flower_id>')
-def flowers(flower_id):
-    if flower_id >= len(flower_list):
-       abort(404)
-    else:
-        return render_template('flower-item.html',
-                               flower_id=flower_id,
-                               name=flower_list[flower_id]['name'],
-                               price=flower_list[flower_id]['price']
-                               )
-
-@app.route('/lab2/flowers/list')
-def get_flowers_list():
-    return render_template('flowers-list.html', flower_list=flower_list)
-
-@app.route('/lab2/flowers/clear')
-def clear_flowers_list():
-    flower_list.clear()
-    return render_template('clear-flowers.html')
-
-@app.route('/lab2/add_flower/<name>/<int:price>')
-def add_flower(name, price):
-    flower_list.append({'name': name, 'price': price})
-    return render_template('add-flowers.html', name=name, price=price)
-
-@app.route('/lab2/delete_flower/<int:id>')
-def delete_flower(id):
-    if id < 0 or id >= len(flower_list):
-        abort(404)
-    else:
-        del flower_list[id]
-    return redirect('/lab2/flowers/list')
-
-@app.route('/lab2/add_flower/')
-def empty_flower_name():
-    abort(400, description='Вы не задали имя цветка.')
-
-@app.route('/lab2/example')
-def example():
- name = "Фот Виктория"
- lab_num = 2
- group = "ФБИ-33"
- course = 3
- fruits = [
-    {'name': 'яблоки', 'price': '100'},
-    {'name': 'груши', 'price': '120'},
-    {'name': 'апельсины', 'price': '80'},
-    {'name': 'мандарины', 'price': '95'},
-    {'name': 'манго', 'price': '321'},
-]
- return render_template('example.html', name=name, lab_num=lab_num, group=group,
-                        course=course, fruits=fruits) 
-
-@app.route('/lab2/')
-def lab2():
- return render_template('lab2.html')
-
-@app.route('/lab2/filters')
-def filters():
- phrase = "О <b>сколько</b> <u>нам</u> <i>открытий</i> чудных..."
- return render_template('filter.html', phrase=phrase)
-
-@app.route('/lab2/calc/')
-@app.route('/lab2/calc/<int:num1>/')
-@app.route('/lab2/calc/<int:num1>/<int:num2>')
-def calculate(num1=1, num2=1):
- add = num1 + num2
- sub = num1 - num2
- mul = num1 * num2
-
- if num2 == 0:
-    div = "Ошибка: деление на ноль"
- else:
-    div = num1 / num2
-
- power = num1 ** num2
-
- return f'''
-<!doctype html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Калькулятор — {num1} и {num2}</title>
-</head>
-<body>
-    <h2>Математические операции с {num1} и {num2}</h2>
-    <ul>
-        <li>Сложение: {num1} + {num2} = {add}</li>
-        <li>Вычитание: {num1} - {num2} = {sub}</li>
-        <li>Умножение: {num1} * {num2} = {mul}</li>
-        <li>Деление: {num1} / {num2} = {div}</li>
-        <li>Возведение в степень: {num1}<sup>{num2}</sup> = {power}</li>
-    </ul>
-</body>
-</html>
-'''
-
-books = [
-    {
-        "title": "1984",
-        "author": "Джордж Оруэлл",
-        "genre": "Антиутопия",
-        "pages": 328
-    },
-    {
-        "title": "Мастер и Маргарита",
-        "author": "Михаил Булгаков",
-        "genre": "Фантастика, сатира",
-        "pages": 480
-    },
-    {
-        "title": "Преступление и наказание",
-        "author": "Фёдор Достоевский",
-        "genre": "Психологический роман",
-        "pages": 592
-    },
-    {
-        "title": "Гарри Поттер и философский камень",
-        "author": "Дж. К. Роулинг",
-        "genre": "Фэнтези",
-        "pages": 432
-    },
-    {
-        "title": "Война и мир",
-        "author": "Лев Толстой",
-        "genre": "Исторический роман",
-        "pages": 1225
-    },
-    {
-        "title": "Анна Каренина",
-        "author": "Лев Толстой",
-        "genre": "Роман",
-        "pages": 864
-    },
-    {
-        "title": "Гордость и предубеждение",
-        "author": "Джейн Остин",
-        "genre": "Роман",
-        "pages": 432
-    },
-    {
-        "title": "Три товарища",
-        "author": "Эрих Мария Ремарк",
-        "genre": "Роман",
-        "pages": 416
-    },
-    {
-        "title": "Алхимик",
-        "author": "Пауло Коэльо",
-        "genre": "Философская притча",
-        "pages": 192
-    },
-    {
-        "title": "451 градус по Фаренгейту",
-        "author": "Рэй Брэдбери",
-        "genre": "Антиутопия",
-        "pages": 256
-    },
-    {
-        "title": "Шерлок Холмс: Исследования",
-        "author": "Артур Конан Дойл",
-        "genre": "Детектив",
-        "pages": 352
-    }
-]
-
-cats_default_dir = 'cats_images/'
-
-cats = [
-    {
-       "name": "Британский короткошёрстный",
-       "description": "Кот с плюшевой шерстью и круглыми глазами.",
-       "image": "british.png"
-    },
-    {
-       "name": "Сиамский кот",
-       "description": "Элегантный кот с голубыми глазами и темными отметинами.",
-       "image": "siamski.png"
-    },
-    {
-       "name": "Мейн-кун",
-       "description": "Один из самых крупных домашних котов с кисточками на ушах.",
-       "image": "meinkun.png"
-    },
-    {
-       "name": "Рэгдолл",
-       "description": "Спокойный и ласковый кот с голубыми глазами.",
-       "image": "ragdoll.png"
-    },
-    {
-       "name": "Сфинкс",
-       "description": "Лысый кот с необычной внешностью и теплой кожей.",
-       "image": "sphynx.png"
-    },
-    {
-       "name": "Шотландская вислоухая",
-       "description": "Она просто милая.",
-       "image": "scotland.png"
-    },
-    {
-       "name": "Бенгальская",
-       "description": "Мяу",
-       "image": "bengal.png"
-    },
-    {
-        "name": "Персидская",
-        "description": "Аристократ с длинной шерстью и приплюснутой мордочкой. Спокойная, но требует регулярного ухода за шерстью.",
-        "image": "persian.png"
-    },
-    {
-        "name": "Абиссинская",
-        "description": "Активная и любопытная кошка с тиккированной шерстью, напоминающей шкуру дикого зверя.",
-        "image": "abyssinian.png"
-    },
-    {
-        "name": "Саванна",
-        "description": "Гибрид домашней кошки и сервала. Высокая, стройная, с большими ушами и диким окрасом.",
-        "image": "savanna.png"
-    },
-    {
-        "name": "Ориентальная",
-        "description": "Стройная кошка с большими ушами и множеством вариантов окраса. Очень умная и разговорчивая.",
-        "image": "prikol.png"
-    },
-    {
-        "name": "Русская голубая",
-        "description": "Изящная кошка с серебристо-голубой шерстью и изумрудными глазами. Скромная и чистоплотная.",
-        "image": "russian.png"
-    },
-    {
-        "name": "Норвежская лесная",
-        "description": "Мощная кошка с густой водонепроницаемой шерстью. Отлично лазает по деревьям и любит природу.",
-        "image": "norwegian.png"
-    },
-    {
-        "name": "Сибирская",
-        "description": "Русская аборигенная порода с гипоаллергенной шерстью. Умная, сильная и преданная.",
-        "image": "siberian.png"
-    },
-    {
-        "name": "Экзотическая короткошёрстная",
-        "description": "«Перс с короткой шерстью». Спокойная, милая и требует меньше ухода, чем персидская.",
-        "image": "exotic.png"
-    },
-    {
-        "name": "Хайленд-фолд",
-        "description": "Шотландская вислоухая кошка с полудлинной шерстью. Милая, игривая и очень фотогеничная.",
-        "image": "highland.png"
-    },
-    {
-        "name": "Скоттиш-фолд",
-        "description": "Знаменита своими загнутыми вперёд ушками. Добрая, спокойная и отлично ладит с детьми.",
-        "image": "fold.png"
-    },
-    {
-        "name": "Корниш-рекс",
-        "description": "Кошка с волнистой шерстью и изящным телом. Очень активна, любит тепло и общение.",
-        "image": "kornish.png"
-    },
-    {
-        "name": "Девон-рекс",
-        "description": "Похожа на эльфа: большие уши, большие глаза и кудрявая шерсть. Игривая и ласковая.",
-        "image": "devon.png"
-    },
-    {
-        "name": "Тойгер",
-        "description": "Создана, чтобы походить на тигра! Имеет полосатый окрас и дружелюбный характер.",
-        "image": "toiger.png"
-    },
-]
-
-@app.route('/lab2/books')
-def get_books_list():
- return render_template('books.html', books=books)
-
-@app.route('/lab2/cats')
-def get_cats_list():
- return render_template('cats.html', cats=cats, dir_path=cats_default_dir)
