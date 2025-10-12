@@ -5,9 +5,14 @@
 {% endblock %}
 
 {% block main %}
-<h2>Лабораторная работа 3. Формы и cookie</h2>
+<h1>Формы, cookie</h1>
+<div>
+    Привет, <span style="color: {{name_color}}"> {{name}}!</span>
+</div>
+<div>Список сделанных страниц:</div>
 
 <ul>
-    <li><a href="/lab3/cookie">Установка cookie</a></li>
+    <li><a href="/lab3/cookie">Куки</a></li>
+    <li><a href="/lab3/del_cookie">Очистить куки</a></li>
 </ul>
 {% endblock %}
