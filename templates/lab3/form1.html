@@ -5,10 +5,16 @@
 {% endblock %}
 
 {% block main %}
+<link rel="stylesheet" href="{{ url_for('static', filename='lab3.css') }}">
 
 {% if user %}
     <h1>Привет, {{ user }}!</h1>
     <h2>Добро пожаловать на наш сайт</h2>
+
+    <label>Ваше имя:</label>
+<div>
+    <input type="text" name="user" value="{{ user or '' }}" placeholder="как вас зовут?">
+</div>
 
     <div>Ваш возраст: {{ age }}</div>
     <div>Ваш пол: 
@@ -30,17 +36,23 @@
         <p>
             <label>Имя пользователя:</label><br>
             <input type="text" name="user" value="{{ user or '' }}">
+            {% if errors.user %}
+                <span class="error">{{ errors.user }}</span>
+            {% endif %}
         </p>
         <p>
             <label>Возраст:</label><br>
             <input type="number" name="age" value="{{ age or '' }}">
+            {% if errors.age %}
+                <span class="error">{{ errors.age }}</span>
+            {% endif %}
         </p>
         <p>
             <label>Пол:</label><br>
             <select name="sex">
                 <option value="">-- Выберите --</option>
-                <option value="male" {% if sex == 'male' %}selected{% endif %}>Мужской</option>
-                <option value="female" {% if sex == 'female' %}selected{% endif %}>Женский</option>
+                <option value="male" {{ sex == 'male' and 'selected' }}>Мужской</option>
+                <option value="female" {{ sex == 'female' and 'selected' }}>Женский</option>
             </select>
         </p>
         <p>
