@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block lab %}
+Лаборатроная работа 3
+{% endblock %}
+
+{% block main %}
+<style>
+    .price-box {
+        background-color: #fff;
+        border: 2px solid #5bc0de;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .price-box h3 {
+        color: #d9534f;
+        margin: 0;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    .btn-primary {
+        background-color: #5cb85c;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+    }
+    .btn-primary:hover {
+        background-color: #4cae4c;
+    }
+    .btn-secondary {
+        background-color: #f0ad4e;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+    }
+    .btn-secondary:hover {
+        background-color: #ec971f;
+    }
+</style>
+
+<div class="price-box">
+    <h3>Сумма к оплате: {{ price }} руб.</h3>
+</div>
+
+<form method="get" action="/lab3/success">
+    <input type="hidden" name="price" value="{{ price }}">
+
+    <div class="form-group">
+        <label>Номер карты:</label>
+        <input type="text" name="card" class="form-control" pattern="\d{16}" placeholder="16 цифр" required>
+    </div>
+    <div class="form-group">
+        <label>Имя владельца:</label>
+        <input type="text" name="name" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label>CVV:</label>
+        <input type="text" name="cvv" class="form-control" pattern="\d{3}" placeholder="3 цифры" required>
+    </div>
+
+    <button type="submit" class="btn-primary">Оплатить</button>
+    <a href="/lab3/order" class="btn-secondary" style="margin-left: 10px;">Отказаться</a>
+</form>
+{% endblock %}

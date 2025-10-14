@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block lab %}
+Лаборатроная работа 3
+{% endblock %}
+
+{% block main %}
+<style>
+    .drink-option {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+    .drink-option:hover {
+        background-color: #eef7ff;
+    }
+    .drink-price {
+        font-weight: bold;
+        color: #d9534f;
+        margin-left: 10px;
+    }
+    .addon-label {
+        display: flex;
+        align-items: center;
+        margin: 10px 0;
+    }
+    .addon-price {
+        font-size: 0.9em;
+        color: #5cb85c;
+        margin-left: 5px;
+    }
+    .submit-btn {
+        background-color: #5bc0de;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+    }
+    .submit-btn:hover {
+        background-color: #31b0d5;
+    }
+</style>
+
+<h2>Выберите напиток</h2>
+
+<form method="get" action="/lab3/pay">
+    <div class="drink-option">
+        <label><input type="radio" name="drink" value="cofee" required> Кофе</label>
+        <span class="drink-price">120 руб.</span>
+    </div>
+    <div class="drink-option">
+        <label><input type="radio" name="drink" value="black-tea"> Чёрный чай</label>
+        <span class="drink-price">80 руб.</span>
+    </div>
+    <div class="drink-option">
+        <label><input type="radio" name="drink" value="green-tea"> Зелёный чай</label>
+        <span class="drink-price">70 руб.</span>
+    </div>
+
+    <div class="addon-label">
+        <label><input type="checkbox" name="milk"> Молоко</label>
+        <span class="addon-price">+30 руб.</span>
+    </div>
+    <div class="addon-label">
+        <label><input type="checkbox" name="sugar"> Сахар</label>
+        <span class="addon-price">+10 руб.</span>
+    </div>
+
+    <button type="submit" class="submit-btn">Заказать</button>
+</form>
+{% endblock %}
