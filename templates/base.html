@@ -1,20 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Фот Виктория. {% block lab %}{% endblock %}.</title>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <style>
+        body {
+            color: {{ request.cookies.get('text_color', '#000000') }};
+            background-color: {{ request.cookies.get('bg_color', '#ffffff') }};
+            font-size: {{ request.cookies.get('font_size', '16') }}px;
+            font-style: {{ request.cookies.get('font_style', 'normal') }};
+        }
+    </style>
 </head>
 <body>
     <header>
         WEB-программирование, часть 2. {{ self.lab() }}
     </header>
+
+    <header>
+        <h1>Лабораторная работа 3</h1>
+    </header>
+
     <main>
         {% block main %}{% endblock %}
     </main>
-    <li><a href="/index">Главное меню</a></li>
+    <ul>
+        <li><a href="/index">Главное меню</a></li>
+    </ul>
+
     <footer>
         &copy; Фот Виктория, ФБИ-33, 3 курс, 2025
     </footer>

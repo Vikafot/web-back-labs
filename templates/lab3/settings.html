@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Лабораторная работа 3{% endblock %}
+
+{% block main %}
+<h2>Настройки отображения</h2>
+
+<form method="GET" action="/lab3/settings">
+    <label>Цвет текста: 
+        <input type="color" name="text_color" value="{{ text_color or '#000000' }}">
+    </label><br><br>
+
+    <label>Цвет фона: 
+        <input type="color" name="bg_color" value="{{ bg_color or '#ffffff' }}">
+    </label><br><br>
+
+    <label>Размер шрифта (px): 
+        <input type="number" name="font_size" min="10" max="48" value="{{ font_size or '16' }}">
+    </label><br><br>
+
+    <label>Стиль текста:
+        <select name="font_style">
+            <option value="normal" {% if font_style == 'normal' %}selected{% endif %}>Обычный</option>
+            <option value="italic" {% if font_style == 'italic' %}selected{% endif %}>Курсив</option>
+            <option value="oblique" {% if font_style == 'oblique' %}selected{% endif %}>Наклонный</option>
+        </select>
+    </label><br><br>
+
+    <button type="submit">Применить</button>
+</form>
+
+<br>
+{% endblock %}
