@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block lab %}
+Деление чисел
+{% endblock %}
+
+{% block main %}
+{% if error %}
+    <div style="color: red; margin-bottom: 15px;">
+        {{ error }}
+    </div>
+    <a href="/lab4/div-form">Назад</a>
+{% else %}
+    <h1>Деление чисел</h1>
+    <p>{{ x1 }} / {{ x2 }} = {{ result }}</p>
+    <a href="/lab4/div-form">Назад</a>
+{% endif %}
+{% endblock %}
