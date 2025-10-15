@@ -103,3 +103,72 @@ def settings():
                            bg_color=bg_color,
                            font_size=font_size,
                            font_style=font_style)
+
+
+@lab3.route('/lab3/ticket_form')
+def ticket_form():
+    return render_template('lab3/ticket_form.html')
+
+
+@lab3.route('/lab3/ticket')
+def ticket():
+    errors = []
+
+    fullname = request.args.get('fullname', '').strip()
+    berth = request.args.get('berth', '')
+    linen = request.args.get('linen') is not None
+    luggage = request.args.get('luggage') is not None
+    age_str = request.args.get('age', '').strip()
+    departure = request.args.get('departure', '').strip()
+    destination = request.args.get('destination', '').strip()
+    travel_date = request.args.get('travel_date', '').strip()
+    insurance = request.args.get('insurance') is not None
+
+    if not fullname:
+        errors.append("Укажите ФИО пассажира.")
+    if not berth:
+        errors.append("Выберите тип полки.")
+    if not age_str:
+        errors.append("Укажите возраст.")
+    else:
+        try:
+            age = int(age_str)
+            if age < 1 or age > 120:
+                errors.append("Возраст должен быть от 1 до 120 лет.")
+        except ValueError:
+            errors.append("Возраст должен быть числом.")
+    if not departure:
+        errors.append("Укажите пункт выезда.")
+    if not destination:
+        errors.append("Укажите пункт назначения.")
+    if not travel_date:
+        errors.append("Укажите дату поездки.")
+
+    if errors:
+        return render_template('lab3/ticket_form.html', errors=errors)
+
+    is_child = age < 18
+    base_price = 700 if is_child else 1000
+    total = base_price
+
+    if berth in ['нижняя', 'нижняя боковая']:
+        total += 100
+    if linen:
+        total += 75
+    if luggage:
+        total += 250
+    if insurance:
+        total += 150
+
+    return render_template('lab3/ticket.html',
+                           fullname=fullname,
+                           berth=berth,
+                           linen=linen,
+                           luggage=luggage,
+                           age=age,
+                           departure=departure,
+                           destination=destination,
+                           travel_date=travel_date,
+                           insurance=insurance,
+                           is_child=is_child,
+                           total_price=total)

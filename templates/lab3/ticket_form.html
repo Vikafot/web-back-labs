@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block lab %}Лаборатроная работа 3{% endblock %}
+
+{% block main %}
+<h2>Форма заказа железнодорожного билета</h2>
+
+{% if errors %}
+    <div style="color: red; margin-bottom: 15px;">
+        {% for error in errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<form method="GET" action="/lab3/ticket">
+    <p>
+        <label>ФИО пассажира:<br>
+            <input type="text" name="fullname" value="{{ request.args.get('fullname', '') }}" required>
+        </label>
+    </p>
+
+    <p>
+        <label>Полка:<br>
+            <select name="berth" required>
+                <option value="">— Выберите —</option>
+                <option value="нижняя" {% if request.args.get('berth') == 'нижняя' %}selected{% endif %}>Нижняя</option>
+                <option value="верхняя" {% if request.args.get('berth') == 'верхняя' %}selected{% endif %}>Верхняя</option>
+                <option value="верхняя боковая" {% if request.args.get('berth') == 'верхняя боковая' %}selected{% endif %}>Верхняя боковая</option>
+                <option value="нижняя боковая" {% if request.args.get('berth') == 'нижняя боковая' %}selected{% endif %}>Нижняя боковая</option>
+            </select>
+        </label>
+    </p>
+
+    <p>
+        <label>
+            <input type="checkbox" name="linen" {% if request.args.get('linen') %}checked{% endif %}>
+            С бельём (+75 ₽)
+        </label>
+    </p>
+
+    <p>
+        <label>
+            <input type="checkbox" name="luggage" {% if request.args.get('luggage') %}checked{% endif %}>
+            С багажом (+250 ₽)
+        </label>
+    </p>
+
+    <p>
+        <label>Возраст:<br>
+            <input type="number" name="age" min="1" max="120" value="{{ request.args.get('age', '') }}" required>
+        </label>
+    </p>
+
+    <p>
+        <label>Пункт выезда:<br>
+            <input type="text" name="departure" value="{{ request.args.get('departure', '') }}" required>
+        </label>
+    </p>
+
+    <p>
+        <label>Пункт назначения:<br>
+            <input type="text" name="destination" value="{{ request.args.get('destination', '') }}" required>
+        </label>
+    </p>
+
+    <p>
+        <label>Дата поездки:<br>
+            <input type="date" name="travel_date" value="{{ request.args.get('travel_date', '') }}" required>
+        </label>
+    </p>
+
+    <p>
+        <label>
+            <input type="checkbox" name="insurance" {% if request.args.get('insurance') %}checked{% endif %}>
+            Страховка (+150 ₽)
+        </label>
+    </p>
+
+    <button type="submit">Оформить билет</button>
+    <a href="/lab3/">Меню</a>
+</form>
+{% endblock %}
