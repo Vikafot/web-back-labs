@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 2{% endblock %}
+
+{% block main %}
+    <h1>Список цветов</h1>
+    {% for item in flower_list %}
+        <p>
+            Название: {{ item.name }}, Цена: {{ item.price }} &#8381;
+            <a href="{{ url_for('lab2.delete_flower', id=loop.index0) }}">Удалить</a>
+        </p>
+    {% endfor %}
+    <p>Всего цветов: {{ flower_list | length }}</p>
+    <a href="/lab2/flowers/clear">Удалить все цветы</a><br>
+    <div style="margin: 10px; padding: 10px; background: #f0f0f0; border-radius: 5px;">
+        <h3>Добавить цветок</h3>
+        Название: <input type="text" id="flowerName" placeholder="Роза">
+        Цена: <input type="number" id="flowerPrice" placeholder="100" min="1">
+        <button onclick="addFlower()">Добавить</button>
+    </div>
+    
+    <script>
+        function addFlower() {
+            const name = document.getElementById('flowerName').value.trim(),
+                price = document.getElementById('flowerPrice').value.trim();
+        
+            if (!name || !price || price <= 0) {
+                alert("Введите корректное название и цену!");
+                return;
+            }
+        
+            const encodedName = encodeURIComponent(name);
+            window.location.href = `/lab2/add_flower/${encodedName}/${price}`;
+        }
+    </script>
+{% endblock %}

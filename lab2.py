@@ -290,7 +290,7 @@ def calculate(num1=1, num2=1):
         <li>Деление: {num1} / {num2} = {div}</li>
         <li>Возведение в степень: {num1}<sup>{num2}</sup> = {power}</li>
     </ul>
-    <a href="/lab2/">Назад к лабораторной 2</a>
+    <a href="/lab2/">Вернуться на главную</a>
 </body>
 </html>
 '''

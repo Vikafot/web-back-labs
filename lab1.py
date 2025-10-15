@@ -45,7 +45,8 @@ def lab1_index():
     </head>
     <body>
         <h1>Лабораторная 1</h1>
-        <p>Flask — фреймворк для создания веб-приложений на языке программирования Python...</p>
+        <p>Flask — фреймворк для создания веб-приложений на языке программирования Python, использующий набор инструментов Werkzeug, а также шаблонизатор Jinja2. Относится к категории так
+называемых микрофреймворков — минималистичных каркасов веб-приложений, сознательно предоставляющих лишь самые базовые возможности.</p>
         <a href="/">На главную</a>
         <h2>Список роутов лабораторной работы 1</h2>
         <ul>
@@ -99,8 +100,8 @@ def generate_error():
 
 @lab1.route('/lab1/image')
 def image():
-    image_path = url_for('static', filename='кот.jpg')
-    css_path = url_for('static', filename='lab1.css')
+    image_path = url_for('static', filename='lab1/кот.jpg')
+    css_path = url_for('static', filename='lab1/lab1.css')
     html_content = f'''
     <!DOCTYPE html>
     <html lang="ru">
@@ -113,7 +114,7 @@ def image():
         <h1>Кот</h1>
         <img src="{image_path}" alt="Кот">
         <br>
-        <a href="/lab1/web">На главную</a>
+        <a href="/lab1">На главную</a>
     </body>
     </html>
     '''

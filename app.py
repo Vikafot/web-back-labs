@@ -18,11 +18,11 @@ def index():
     <html lang="ru">
     <head>
         <meta charset="UTF-8">
-        <title>HГТУ, ФБ, Лабораторные работы</title>
+        <title>НГТУ, ФБ, Лабораторные работы</title>
     </head>
     <body>
         <header>
-            <h1>HГТУ, ФБ, WEB-программирование, часть 2. Список лабораторных</h1>
+            <h1>НГТУ, ФБ, WEB-программирование, часть 2. Список лабораторных работ.</h1>
         </header>
         <nav>
             <ul>
@@ -40,10 +40,10 @@ def index():
 
 @app.errorhandler(404)
 def not_found(error):
+    # === ЛОГИРОВАНИЕ ===
     client_ip = request.remote_addr
     access_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     requested_url = request.url
-    user_agent = request.headers.get('User-Agent', 'Неизвестно')
 
     log_entry = f"{access_time}, пользователь {client_ip} зашёл на адрес: {requested_url}"
     if not hasattr(app, 'error_log'):
@@ -52,19 +52,48 @@ def not_found(error):
     if len(app.error_log) > 20:
         app.error_log.pop(0)
 
+    # === ОТОБРАЖЕНИЕ СТРАНИЦЫ С КАРТИНКОЙ ===
+    image_path = url_for('static', filename='lab1/ошибка.jpg')
     return f'''
-    <!DOCTYPE html>
-    <html lang="ru">
-    <head><meta charset="UTF-8"><title>Страница не найдена</title></head>
-    <body>
-        <h1>404 - Страница не найдена</h1>
-        <p>IP: {client_ip}, время: {access_time}, URL: {requested_url}</p>
-        <a href="/">На главную</a>
-        <h3>Журнал (последние 20):</h3>
-        <pre>{'<br>'.join(reversed(app.error_log))}</pre>
-    </body>
-    </html>
-    ''', 404
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Страница не найдена</title>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }}
+        .error {{
+            color: #d9534f;
+        }}
+        .log {{
+            text-align: left;
+            margin: 20px auto;
+            max-width: 600px;
+            font-family: monospace;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+        }}
+    </style>
+</head>
+<body>
+    <h1 class="error">404 - Страница не найдена</h1>
+    <p>Запрашиваемая страница не существует.</p>
+    <img src="{image_path}" alt="Ошибка 404" width="500">
+    <br><br>
+    <a href="/">Вернуться на главную</a>
+
+    <div class="log">
+        <h3>Последние 5 ошибок:</h3>
+        {'<br>'.join(reversed(app.error_log[-5:]))}
+    </div>
+</body>
+</html>
+''', 404
 
 
 @app.errorhandler(500)
