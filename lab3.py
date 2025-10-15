@@ -172,3 +172,12 @@ def ticket():
                            insurance=insurance,
                            is_child=is_child,
                            total_price=total)
+
+@lab3.route('/lab3/clear-settings')
+def clear_settings():
+    resp = make_response(redirect('/lab3/'))
+    resp.set_cookie('text_color', '', expires=0)
+    resp.set_cookie('bg_color', '', expires=0)
+    resp.set_cookie('font_size', '', expires=0)
+    resp.set_cookie('font_style', '', expires=0)
+    return resp
