@@ -3,6 +3,32 @@ from flask import Blueprint, render_template, request, make_response, redirect
 lab3 = Blueprint('lab3', __name__)
 
 
+products = [
+    {"name": "iPhone 15", "price": 95000, "brand": "Apple", "color": "Чёрный"},
+    {"name": "Samsung Galaxy S24", "price": 85000, "brand": "Samsung", "color": "Серебристый"},
+    {"name": "Xiaomi 14", "price": 65000, "brand": "Xiaomi", "color": "Синий"},
+    {"name": "Google Pixel 8", "price": 72000, "brand": "Google", "color": "Белый"},
+    {"name": "Huawei P60", "price": 58000, "brand": "Huawei", "color": "Зелёный"},
+    {"name": "OnePlus 12", "price": 68000, "brand": "OnePlus", "color": "Чёрный"},
+    {"name": "Sony Xperia 1 V", "price": 92000, "brand": "Sony", "color": "Фиолетовый"},
+    {"name": "Motorola Edge 40", "price": 45000, "brand": "Motorola", "color": "Красный"},
+    {"name": "Nokia G42", "price": 18000, "brand": "Nokia", "color": "Серый"},
+    {"name": "Realme GT Neo 5", "price": 42000, "brand": "Realme", "color": "Чёрный"},
+    {"name": "Oppo Find X6", "price": 75000, "brand": "Oppo", "color": "Золотой"},
+    {"name": "Vivo X90", "price": 62000, "brand": "Vivo", "color": "Синий"},
+    {"name": "ASUS ROG Phone 7", "price": 88000, "brand": "ASUS", "color": "Чёрный"},
+    {"name": "Nothing Phone (2)", "price": 55000, "brand": "Nothing", "color": "Белый"},
+    {"name": "ZTE Axon 40", "price": 38000, "brand": "ZTE", "color": "Серый"},
+    {"name": "iPhone 14", "price": 78000, "brand": "Apple", "color": "Синий"},
+    {"name": "Samsung Galaxy A54", "price": 35000, "brand": "Samsung", "color": "Лимонный"},
+    {"name": "Xiaomi Redmi Note 13", "price": 22000, "brand": "Xiaomi", "color": "Зелёный"},
+    {"name": "Honor 90", "price": 48000, "brand": "Honor", "color": "Чёрный"},
+    {"name": "iPhone SE (2022)", "price": 45000, "brand": "Apple", "color": "Белый"},
+    {"name": "Poco F5", "price": 32000, "brand": "Poco", "color": "Синий"},
+    {"name": "Infinix Zero 30", "price": 28000, "brand": "Infinix", "color": "Фиолетовый"},
+]
+
+
 @lab3.route('/lab3/')
 def lab():
     name = request.cookies.get('name', 'аноним')
@@ -180,4 +206,57 @@ def clear_settings():
     resp.set_cookie('bg_color', '', expires=0)
     resp.set_cookie('font_size', '', expires=0)
     resp.set_cookie('font_style', '', expires=0)
+    return resp
+
+@lab3.route('/lab3/products')
+def products_search():
+    global_min = min(p['price'] for p in products)
+    global_max = max(p['price'] for p in products)
+
+    min_price = request.args.get('min_price') or request.cookies.get('min_price')
+    max_price = request.args.get('max_price') or request.cookies.get('max_price')
+
+    def to_int(val):
+        return int(val) if val and val.isdigit() else None
+
+    min_val = to_int(min_price)
+    max_val = to_int(max_price)
+
+    if min_val is not None and max_val is not None:
+        if min_val > max_val:
+            min_val, max_val = max_val, min_val
+
+    filtered = []
+    for p in products:
+        include = True
+        if min_val is not None and p['price'] < min_val:
+            include = False
+        if max_val is not None and p['price'] > max_val:
+            include = False
+        if include:
+            filtered.append(p)
+
+    resp = make_response(render_template(
+        'lab3/products.html',
+        products=filtered,
+        min_price=min_val,
+        max_price=max_val,
+        global_min=global_min,
+        global_max=global_max
+    ))
+
+    if request.args.get('action') == 'search':
+        if min_val is not None:
+            resp.set_cookie('min_price', str(min_val))
+        if max_val is not None:
+            resp.set_cookie('max_price', str(max_val))
+
+    return resp
+
+
+@lab3.route('/lab3/products/reset')
+def products_reset():
+    resp = make_response(redirect('/lab3/products'))
+    resp.set_cookie('min_price', '', expires=0)
+    resp.set_cookie('max_price', '', expires=0)
     return resp
