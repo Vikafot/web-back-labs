@@ -21,12 +21,13 @@
                 <input type="password" id="password" name="password" required>
             </div>
             {% if error %}
-                <div style="color: red; font-weight: bold;">{{ error }}</div>
+                <div style="color: red; font-weight: bold; margin: 10px 0;">{{ error }}</div>
             {% endif %}
             <div>
                 <button type="submit">Войти</button>
                 <button type="reset">Отмена</button>
             </div>
+        </form>
         <a href="/lab4/">Меню</a>
     {% endif %}
 {% endblock %}
