@@ -6,12 +6,19 @@
 <h2>Нравится/не нравится</h2>
 
 <div>
-    Посажено деревьев: {{ tree_count }}
+    Посажено деревьев: {{ tree_count }} / {{ max_trees }}
 </div>
 
 <form method="POST">
-    <button type="submit" name="operation" value="plant">Посадить дерево</button>
-    <button type="submit" name="operation" value="cut">Срубить дерево</button>
+    <button type="submit" name="operation" value="plant"
+            {% if tree_count >= max_trees %}disabled{% endif %}>
+        Посадить дерево
+    </button>
+    <button type="submit" name="operation" value="cut"
+            {% if tree_count <= 0 %}disabled{% endif %}>
+        Срубить дерево
+    </button>
 </form>
+
 <a href="/lab4/">Меню</a>
 {% endblock %}
