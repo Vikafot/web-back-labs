@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 4{% endblock %}
+
+{% block main %}
+    <h1>Холодильник</h1>
+    <p>Установите желаемую температуру (в диапазоне от -12°C до -1°C):</p>
+
+    <form method="post">
+        <div>
+            <label for="temperature">Температура (°C):</label>
+            <input type="number" id="temperature" name="temperature" step="0.1" required>
+        </div>
+        <button type="submit">Установить</button>
+    </form>
+
+    {% if result %}
+        <div style="margin-top: 20px; padding: 15px; border-radius: 8px; {% if result.error %}background-color: #ffe6e6; color: red;{% else %}background-color: #e6f7ff; color: #004080;{% endif %}">
+            <strong>{{ result.message }}</strong>
+            {% if not result.error %}
+                <div style="font-size: 24px; margin-top: 10px;">
+                    {% for i in range(result.snowflakes) %}❄️{% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        <a href="/lab4/">Меню</a>
+    {% endif %}
+{% endblock %}

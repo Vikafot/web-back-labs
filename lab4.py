@@ -184,3 +184,66 @@ def login():
 def logout():
     session.pop('login', None)
     return redirect(url_for('lab4.login'))
+
+
+@lab4.route('/lab4/fridge', methods=['GET', 'POST'])
+def fridge():
+    if request.method == 'GET':
+        return render_template('lab4/fridge.html', result=None)
+    temp_str = request.form.get('temperature')
+  
+    if not temp_str:
+        result = {
+            'message': 'ошибка: не задана температура',
+            'snowflakes': 0,
+            'error': True
+        }
+        return render_template('lab4/fridge.html', result=result)
+
+    try:
+        temp = float(temp_str)
+    except ValueError:
+        result = {
+            'message': 'ошибка: температура должна быть числом',
+            'snowflakes': 0,
+            'error': True
+        }
+        return render_template('lab4/fridge.html', result=result)
+
+    if temp < -12:
+        result = {
+            'message': 'не удалось установить температуру — слишком низкое значение',
+            'snowflakes': 0,
+            'error': True
+        }
+    elif temp > -1:
+        result = {
+            'message': 'не удалось установить температуру — слишком высокое значение',
+            'snowflakes': 0,
+            'error': True
+        }
+    elif -12 <= temp <= -9:
+        result = {
+            'message': f'Установлена температура: {temp}°С',
+            'snowflakes': 3,
+            'error': False
+        }
+    elif -8 <= temp <= -5:
+        result = {
+            'message': f'Установлена температура: {temp}°С',
+            'snowflakes': 2,
+            'error': False
+        }
+    elif -4 <= temp <= -1:
+        result = {
+            'message': f'Установлена температура: {temp}°С',
+            'snowflakes': 1,
+            'error': False
+        }
+    else:
+        result = {
+            'message': 'не удалось установить температуру — значение вне допустимых диапазонов',
+            'snowflakes': 0,
+            'error': True
+        }
+    return render_template('lab4/fridge.html', result=result)
