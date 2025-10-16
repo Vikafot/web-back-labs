@@ -5,24 +5,28 @@
 {% block main %}
     {% if authorized %}
         <h1>Добро пожаловать, {{ login }}!</h1>
+        <form action="{{ url_for('lab4.logout') }}" method="post">
+            <button type="submit">Выход</button>
+        </form>
     {% else %}
         <h1>Вход</h1>
         <h2>Пожалуйста, авторизуйтесь</h2>
         <form method="post">
             <div>
                 <label for="login">Пользователь:</label>
-                <input type="text" id="login" name="login">
+                <input type="text" id="login" name="login" value="{{ login }}" required>
             </div>
             <div>
                 <label for="password">Пароль:</label>
-                <input type="password" id="password" name="password">
+                <input type="password" id="password" name="password" required>
             </div>
-            <div>{{ error }}</div>
+            {% if error %}
+                <div style="color: red; font-weight: bold;">{{ error }}</div>
+            {% endif %}
             <div>
                 <button type="submit">Войти</button>
                 <button type="reset">Отмена</button>
             </div>
-        </form>
-        <a href="/lab4">Меню</a>
+        <a href="/lab4/">Меню</a>
     {% endif %}
 {% endblock %}
