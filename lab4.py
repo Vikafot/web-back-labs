@@ -247,3 +247,68 @@ def fridge():
             'error': True
         }
     return render_template('lab4/fridge.html', result=result)
+
+
+@lab4.route('/lab4/grain', methods=['GET', 'POST'])
+def grain_order():
+    if request.method == 'GET':
+        return render_template('lab4/grain.html', result=None)
+
+    grain_type = request.form.get('grain')
+    weight_str = request.form.get('weight')
+
+    grain_prices = {
+        'barley': 12000,
+        'oats': 8500,
+        'wheat': 9000,
+        'rye': 15000
+    }
+
+    grain_names = {
+        'barley': 'ячмень',
+        'oats': 'овёс',
+        'wheat': 'пшеница',
+        'rye': 'рожь'
+    }
+
+    if not grain_type or grain_type not in grain_prices:
+        result = {'error': 'Не выбран тип зерна'}
+        return render_template('lab4/grain.html', result=result)
+
+    if not weight_str:
+        result = {'error': 'Вес не указан'}
+        return render_template('lab4/grain.html', result=result)
+
+    try:
+        weight = float(weight_str)
+    except ValueError:
+        result = {'error': 'Вес должен быть числом'}
+        return render_template('lab4/grain.html', result=result)
+
+    if weight <= 0:
+        result = {'error': 'Вес должен быть больше нуля'}
+        return render_template('lab4/grain.html', result=result)
+
+    if weight > 100:
+        result = {'error': 'Такого объёма сейчас нет в наличии'}
+        return render_template('lab4/grain.html', result=result)
+
+    price_per_ton = grain_prices[grain_type]
+    total = weight * price_per_ton
+    discount_applied = False
+    discount_amount = 0
+
+    if weight > 10:
+        discount_applied = True
+        discount_amount = total * 0.10
+        total -= discount_amount
+
+    result = {
+        'success': True,
+        'grain_name': grain_names[grain_type],
+        'weight': weight,
+        'total': round(total, 2),
+        'discount_applied': discount_applied,
+        'discount_amount': round(discount_amount, 2)
+    }
+    return render_template('lab4/grain.html', result=result)

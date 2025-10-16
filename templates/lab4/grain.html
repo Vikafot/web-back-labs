@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 4{% endblock %}
+
+{% block main %}
+    <h1>Заказ зерна</h1>
+    <form method="post">
+        <div>
+            <label for="grain">Тип зерна:</label>
+            <select id="grain" name="grain" required>
+                <option value="">— Выберите —</option>
+                <option value="barley">Ячмень (12 000 ₽/т)</option>
+                <option value="oats">Овёс (8 500 ₽/т)</option>
+                <option value="wheat">Пшеница (9 000 ₽/т)</option>
+                <option value="rye">Рожь (15 000 ₽/т)</option>
+            </select>
+        </div>
+        <div>
+            <label for="weight">Вес (тонн):</label>
+            <input type="number" id="weight" name="weight" step="0.1" min="0.1" required>
+        </div>
+        <button type="submit">Оформить заказ</button>
+    </form>
+
+    {% if result %}
+        <div style="margin-top: 20px; padding: 15px; border-radius: 8px;">
+            {% if result.error %}
+                <div style="background-color: #ffe6e6; color: red; font-weight: bold;">
+                    {{ result.error }}
+                </div>
+            {% elif result.success %}
+                <div style="background-color: #e6ffe6; color: #006600; font-weight: bold;">
+                    Заказ успешно сформирован. Вы заказали {{ result.grain_name }}. Вес: {{ "%.1f"|format(result.weight) }} т. Сумма к оплате: {{ "{:,.2f}".format(result.total) }} руб.
+                </div>
+                {% if result.discount_applied %}
+                    <div style="margin-top: 10px; color: #004d00;">
+                        Применена скидка за большой объём: {{ "{:,.2f}".format(result.discount_amount) }} руб. (10%)
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+        <a href="/lab4/">Меню</a>
+    {% endif %}
+{% endblock %}
