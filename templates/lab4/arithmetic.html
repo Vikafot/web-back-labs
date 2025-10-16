@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 4{% endblock %}
+
+{% block main %}
+<h2>{{ operation }}</h2>
+
+{% if show_form %}
+<form method="GET">
+    <p>
+        <label>Число A: <input type="text" name="a" value="{{ a }}"></label>
+    </p>
+    <p>
+        <label>Число B: <input type="text" name="b" value="{{ b }}"></label>
+    </p>
+    <button type="submit">Вычислить</button>
+</form>
+{% endif %}
+
+<hr>
+
+{% if result is not none %}
+    <h3>Результат: {{ result }}</h3>
+{% endif %}
+
+<br>
+<a href="/lab4/">Меню</a>
+{% endblock %}
