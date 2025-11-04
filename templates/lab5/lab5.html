@@ -8,7 +8,7 @@
 <body>
     <div class="container">
         <h1>WEB-программирование, часть 2. Лабораторная работа 5</h1>
-        <p>Пользователь: {{ username }}</p>
+        <p>Пользователь: {{ login or 'Anonymous'}}</p>
         <nav>
             <ul>
                 <li><a href="/lab5/login">Вход</a></li>
