@@ -79,3 +79,224 @@ th {
 .item img:hover {
     scale: 1.05;
 }
+
+.register-container {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+.register-container h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #555;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.6rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.error-message {
+    color: #d32f2f;
+    background-color: #ffebee;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    border-left: 4px solid #d32f2f;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.submit-btn:hover {
+    background-color: #0056b3;
+}
+
+.articles-list {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.articles-list h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+}
+
+.article-item {
+    margin-bottom: 2rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid #eee;
+}
+
+.article-item h2 {
+    margin: 0 0 0.6rem;
+    font-size: 1.4rem;
+    color: #3498db;
+}
+
+.article-item blockquote {
+    margin: 0;
+    padding-left: 1rem;
+    border-left: 3px solid #ddd;
+    color: #555;
+    font-style: normal;
+    line-height: 1.6;
+}
+
+.no-articles {
+    text-align: center;
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+.create-article-form {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background: #fafcff;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+    font-family: system-ui, sans-serif;
+}
+
+.create-article-form h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+}
+
+.create-article-form div {
+    margin-bottom: 1.2rem;
+}
+
+.create-article-form label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+    color: #34495e;
+}
+
+.create-article-form input[type="text"],
+.create-article-form textarea {
+    width: 100%;
+    padding: 0.7rem;
+    font-size: 1rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 10px;
+    background: white;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.create-article-form input[type="text"]:focus,
+.create-article-form textarea:focus {
+    outline: none;
+    border-color: #6a8cff;
+    box-shadow: 0 0 0 3px rgba(106, 140, 255, 0.25);
+}
+
+.create-article-form textarea {
+    min-height: 160px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.5;
+}
+
+.create-article-form button[type="submit"] {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: white;
+    background: #5a72f5;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.create-article-form button[type="submit"]:hover {
+    background: #445de0;
+}
+
+.edit-form {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background: #fafcff;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+    font-family: system-ui, sans-serif;
+}
+.edit-form h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+}
+.edit-form label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+    color: #34495e;
+}
+.edit-form input[type="text"],
+.edit-form textarea {
+    width: 100%;
+    padding: 0.7rem;
+    font-size: 1rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+.edit-form textarea {
+    min-height: 160px;
+    resize: vertical;
+}
+.edit-form button {
+    width: 100%;
+    padding: 0.8rem;
+    margin-top: 1rem;
+    background: #5a72f5;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}

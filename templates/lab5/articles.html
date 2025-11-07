@@ -3,10 +3,19 @@
 {% block lab %}Лабораторная работа 5{% endblock %}
 
 {% block main %}
-    <h1>Статьи</h1>
-
-    {% for article in articles %}
-        <h2>{{ article['title'] }}</h2>
-        <blockquote>{{ article['article_text'] }}</blockquote>
-    {% endfor %}
+{% for article in articles %}
+<div class="article-item">
+    <h2>{{ article['title'] }}</h2>
+    <blockquote>{{ article['article_text'] }}</blockquote>
+    <div style="margin-top: 0.5rem;">
+        <a href="/lab5/edit/{{ article.id }}" style="margin-right: 10px; color: #3498db;">Редактировать</a>
+        <form method="post" action="/lab5/delete/{{ article.id }}" style="display: inline;">
+            <button type="submit" style="background: none; border: none; color: #e74c3c; cursor: pointer;"
+                onclick="return confirm('Удалить статью?')">
+                Удалить
+            </button>
+        </form>
+    </div>
+</div>
+{% endfor %}
 {% endblock %}

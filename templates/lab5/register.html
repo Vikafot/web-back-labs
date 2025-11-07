@@ -3,26 +3,27 @@
 {% block lab %}Лабораторная работа 5{% endblock %}
 
 {% block main %}
+
+<div class="register-container">
     <h1>Регистрация</h1>
     <form action="/lab5/register" method="post">
-        <div>
-            <label>
-                Логин: <input type="text" name="login">
-            </label>
+        <div class="form-group">
+            <label for="login">Логин:</label>
+            <input type="text" id="login" name="login" required>
         </div>
 
-        <div>
-            <label>
-                Пароль: <input type="password" name="password">
-            </label>
+        <div class="form-group">
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" required>
         </div>
 
         {% if error %}
-            <div style="color: red;">
-                {{ error }}
-            </div>
+        <div class="error-message">
+            {{ error }}
+        </div>
         {% endif %}
 
-        <button type="submit">Зарегистрироваться</button>
+        <button type="submit" class="submit-btn">Зарегистрироваться</button>
     </form>
+</div>
 {% endblock %}
