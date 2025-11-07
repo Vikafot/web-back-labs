@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 5{% endblock %}
+
+{% block main %}
+<style>
+    .profile-form {
+        max-width: 500px;
+        margin: 2rem auto;
+        padding: 1.5rem;
+        background: #f8fafd;
+        border-radius: 14px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+        font-family: system-ui, sans-serif;
+    }
+    .profile-form h1 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        color: #2c3e50;
+    }
+    .form-group {
+        margin-bottom: 1.2rem;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 0.4rem;
+        font-weight: 500;
+        color: #34495e;
+    }
+    .form-group input {
+        width: 100%;
+        padding: 0.65rem;
+        font-size: 1rem;
+        border: 1px solid #cbd5e0;
+        border-radius: 10px;
+        box-sizing: border-box;
+    }
+    .form-group input[type="password"] {
+        font-family: monospace;
+    }
+    .btn {
+        width: 100%;
+        padding: 0.75rem;
+        background: #5a72f5;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.05rem;
+        cursor: pointer;
+    }
+    .btn:hover {
+        background: #445de0;
+    }
+    .success {
+        background: #e6f7ee;
+        color: #2e7d32;
+        padding: 0.7rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+    .error {
+        color: #d32f2f;
+        margin-top: 0.5rem;
+        font-size: 0.95rem;
+    }
+</style>
+
+<div class="profile-form">
+    <h1>Профиль</h1>
+
+    {% if request.args.get('updated') %}
+        <div class="success">Данные успешно обновлены!</div>
+    {% endif %}
+
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form method="post">
+        <div class="form-group">
+            <label for="real_name">Ваше имя:</label>
+            <input type="text" id="real_name" name="real_name" value="{{ user.real_name or '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="old_password">Текущий пароль:</label>
+            <input type="password" id="old_password" name="old_password" autocomplete="current-password">
+        </div>
+
+        <div class="form-group">
+            <label for="new_password">Новый пароль:</label>
+            <input type="password" id="new_password" name="new_password" autocomplete="new-password">
+        </div>
+
+        <div class="form-group">
+            <label for="confirm_password">Подтверждение пароля:</label>
+            <input type="password" id="confirm_password" name="confirm_password" autocomplete="new-password">
+        </div>
+
+        <button type="submit" class="btn">Сохранить изменения</button>
+    </form>
+
+    <p style="text-align: center; margin-top: 1.2rem;">
+        <a href="/lab5" style="color: #555;">Назад</a>
+    </p>
+</div>
+{% endblock %}

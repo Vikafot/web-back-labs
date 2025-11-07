@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 5{% endblock %}
+
+{% block main %}
+<style>
+    .users-page {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 1.5rem;
+        background: #f9fbff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        font-family: system-ui, sans-serif;
+    }
+    .users-page h1 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        color: #2c3e50;
+    }
+    .user-item {
+        padding: 0.8rem;
+        margin-bottom: 0.6rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .user-login {
+        font-weight: 600;
+        color: #3498db;
+    }
+    .user-name {
+        color: #555;
+        font-style: italic;
+    }
+    .no-name {
+        color: #999;
+        font-style: normal;
+    }
+</style>
+
+<div class="users-page">
+    <h1>Список пользователей</h1>
+
+    {% if users %}
+        {% for user in users %}
+            <div class="user-item">
+                <div class="user-login">{{ user.login }}</div>
+                <div class="user-name">
+                    {% if user.real_name %}
+                        {{ user.real_name }}
+                    {% else %}
+                        <span class="no-name">Имя не указано</span>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p style="text-align: center; color: #7f8c8d;">Пользователей пока нет.</p>
+    {% endif %}
+
+    <p style="text-align: center; margin-top: 1.5rem;">
+        <a href="/lab5" style="color: #555;">Назад</a>
+    </p>
+</div>
+{% endblock %}

@@ -5,7 +5,12 @@
 {% block main %}
 {% for article in articles %}
 <div class="article-item">
-    <h2>{{ article['title'] }}</h2>
+    <h2>
+        {{ article.title }}
+        {% if article.is_favorite %}
+        <span style="color: gold;">★</span>
+        {% endif %}
+    </h2>
     <blockquote>{{ article['article_text'] }}</blockquote>
     <div style="margin-top: 0.5rem;">
         <a href="/lab5/edit/{{ article.id }}" style="margin-right: 10px; color: #3498db;">Редактировать</a>

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 5{% endblock %}
+
+{% block main %}
+<style>
+    .public-page {
+        max-width: 700px;
+        margin: 2rem auto;
+        padding: 1.5rem;
+        background: #f9fbff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        font-family: system-ui, sans-serif;
+    }
+
+    .public-page h1 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        color: #2c3e50;
+    }
+
+    .article {
+        padding: 1rem;
+        margin-bottom: 1.2rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .article h2 {
+        margin: 0 0 0.5rem;
+        color: #3498db;
+    }
+
+    .article .author {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        margin-bottom: 0.8rem;
+    }
+
+    .article blockquote {
+        margin: 0;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    .no-articles {
+        text-align: center;
+        color: #7f8c8d;
+        font-style: italic;
+    }
+</style>
+
+<div class="public-page">
+    <h1>Публичные статьи</h1>
+
+    {% if articles %}
+    {% for article in articles %}
+    <div class="article">
+        <h2>{{ article.title }}</h2>
+        <div class="author">Автор: {{ article.login }}</div>
+        <blockquote>{{ article.article_text }}</blockquote>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p class="no-articles">Нет публичных статей.</p>
+    {% endif %}
+
+    <p style="text-align: center; margin-top: 1.5rem;">
+        <a href="/lab5" style="color: #555;">Назад</a>
+    </p>
+</div>
+{% endblock %}

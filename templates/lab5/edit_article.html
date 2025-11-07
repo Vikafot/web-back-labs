@@ -13,6 +13,20 @@
         <label>Текст статьи:</label>
         <textarea name="article_text" required>{{ article.article_text }}</textarea>
 
+        <div>
+            <label>
+                <input type="checkbox" name="is_favorite" value="1" {% if article.is_favorite %}checked{% endif %}>
+                В избранное
+            </label>
+        </div>
+
+        <div>
+            <label>
+                <input type="checkbox" name="is_public" value="1" {% if article.is_public %}checked{% endif %}>
+                Публичная
+            </label>
+        </div>
+
         {% if error %}
         <div class="error-message">{{ error }}</div>
         {% endif %}
