@@ -7,6 +7,7 @@ from lab2 import lab2
 from lab3 import lab3
 from lab4 import lab4
 from lab5 import lab5
+from lab6 import lab6
 
 
 
@@ -20,6 +21,7 @@ app.register_blueprint(lab2)
 app.register_blueprint(lab3)
 app.register_blueprint(lab4)
 app.register_blueprint(lab5)
+app.register_blueprint(lab6)
 
 
 @app.route('/')
@@ -55,7 +57,6 @@ def index():
 
 @app.errorhandler(404)
 def not_found(error):
-    # === ЛОГИРОВАНИЕ ===
     client_ip = request.remote_addr
     access_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     requested_url = request.url
@@ -67,7 +68,6 @@ def not_found(error):
     if len(app.error_log) > 20:
         app.error_log.pop(0)
 
-    # === ОТОБРАЖЕНИЕ СТРАНИЦЫ С КАРТИНКОЙ ===
     image_path = url_for('static', filename='lab1/ошибка.jpg')
     return f'''
 <!DOCTYPE html>
