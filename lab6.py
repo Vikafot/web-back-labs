@@ -4,7 +4,7 @@ lab6 = Blueprint('lab6', __name__, template_folder='templates')
 
 offices = []
 for i in range(1, 11):
-    offices.append({"number": i, "tenant": ""})
+    offices.append({"number": i, "tenant": "", "price": 900 + i*3})
 
 @lab6.route('/lab6/')
 def main():
