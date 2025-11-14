@@ -1,12 +1,7 @@
-from flask import Blueprint, render_template, request, session
-import sqlite3
+from flask import Blueprint, render_template, request, session, current_app
+from database import db_connect, db_close
 
 lab6 = Blueprint('lab6', __name__, template_folder='templates')
-
-def get_db_connection():
-    conn = sqlite3.connect('database.db')
-    conn.row_factory = sqlite3.Row  
-    return conn
 
 @lab6.route('/lab6/')
 def main():
@@ -18,12 +13,19 @@ def api():
     id = data.get('id')
 
     if data['method'] == 'info':
-        conn = get_db_connection()
-        offices = conn.execute('SELECT number, tenant, price FROM offices ORDER BY number').fetchall()
-        conn.close()
+        conn, cur = db_connect()
+        cur.execute("SELECT number, tenant, price FROM offices ORDER BY number")
+        rows = cur.fetchall()
+
+        if current_app.config['DB_TYPE'] == 'postgres':
+            offices = [dict(row) for row in rows]
+        else:
+            offices = [dict(row) for row in rows]
+
+        db_close(conn, cur)
         return {
             'jsonrpc': '2.0',
-            'result': [dict(row) for row in offices],
+            'result': offices,
             'id': id
         }
 
@@ -32,10 +34,7 @@ def api():
         if not login:
             return {
                 'jsonrpc': '2.0',
-                'error': {
-                    'code': 1,
-                    'message': 'Unauthorized'
-                },
+                'error': {'code': 1, 'message': 'Unauthorized'},
                 'id': id
             }
 
@@ -43,41 +42,41 @@ def api():
         if office_number is None:
             return {
                 'jsonrpc': '2.0',
-                'error': {
-                    'code': -32602,
-                    'message': 'Параметр params обязателен'
-                },
+                'error': {'code': -32602, 'message': 'Параметр params обязателен'},
                 'id': id
             }
 
-        conn = get_db_connection()
-        office = conn.execute('SELECT * FROM offices WHERE number = ?', (office_number,)).fetchone()
+        conn, cur = db_connect()
+        cur.execute("SELECT * FROM offices WHERE number = %s" if current_app.config['DB_TYPE'] == 'postgres' else "SELECT * FROM offices WHERE number = ?", (office_number,))
+        row = cur.fetchone()
 
-        if not office:
-            conn.close()
+        if not row:
+            db_close(conn, cur)
             return {
                 'jsonrpc': '2.0',
-                'error': {
-                    'code': -32602,
-                    'message': f'Офис {office_number} не существует'
-                },
+                'error': {'code': -32602, 'message': f'Офис {office_number} не существует'},
                 'id': id
             }
+
+        if current_app.config['DB_TYPE'] == 'postgres':
+            office = dict(row)
+        else:
+            office = dict(zip([col[0] for col in cur.description], row))
 
         if office['tenant'] != '':
-            conn.close()
+            db_close(conn, cur)
             return {
                 'jsonrpc': '2.0',
-                'error': {
-                    'code': 2,
-                    'message': 'Already booked'
-                },
+                'error': {'code': 2, 'message': 'Already booked'},
                 'id': id
             }
 
-        conn.execute('UPDATE offices SET tenant = ? WHERE number = ?', (login, office_number))
-        conn.commit()
-        conn.close()
+        cur.execute(
+            "UPDATE offices SET tenant = %s WHERE number = %s" if current_app.config['DB_TYPE'] == 'postgres'
+            else "UPDATE offices SET tenant = ? WHERE number = ?",
+            (login, office_number)
+        )
+        db_close(conn, cur)
 
         return {
             'jsonrpc': '2.0',
@@ -90,10 +89,7 @@ def api():
         if not login:
             return {
                 'jsonrpc': '2.0',
-                'error': {
-                    'code': 1,
-                    'message': 'Unauthorized'
-                },
+                'error': {'code': 1, 'message': 'Unauthorized'},
                 'id': id
             }
 
@@ -101,62 +97,58 @@ def api():
         if office_number is None:
             return {
                 'jsonrpc': '2.0',
-                'error': {
-                    'code': -32602,
-                    'message': 'Параметр params обязателен'
-                },
+                'error': {'code': -32602, 'message': 'Параметр params обязателен'},
                 'id': id
             }
 
-        conn = get_db_connection()
-        office = conn.execute('SELECT * FROM offices WHERE number = ?', (office_number,)).fetchone()
+        conn, cur = db_connect()
+        cur.execute("SELECT * FROM offices WHERE number = %s" if current_app.config['DB_TYPE'] == 'postgres' else "SELECT * FROM offices WHERE number = ?", (office_number,))
+        row = cur.fetchone()
 
-        if not office:
-            conn.close()
+        if not row:
+            db_close(conn, cur)
             return {
                 'jsonrpc': '2.0',
-                'error': {
-                    'code': -32602,
-                    'message': f'Офис {office_number} не существует'
-                },
+                'error': {'code': -32602, 'message': f'Офис {office_number} не существует'},
                 'id': id
             }
+
+        if current_app.config['DB_TYPE'] == 'postgres':
+            office = dict(row)
+        else:
+            office = dict(zip([col[0] for col in cur.description], row))
 
         if office['tenant'] == '':
-            conn.close()
+            db_close(conn, cur)
             return {
                 'jsonrpc': '2.0',
-                'error': {
-                    'code': 3,
-                    'message': 'Office is not booked'
-                },
+                'error': {'code': 3, 'message': 'Office is not booked'},
                 'id': id
             }
 
         if office['tenant'] != login:
-            conn.close()
+            db_close(conn, cur)
             return {
                 'jsonrpc': '2.0',
-                'error': {
-                    'code': 4,
-                    'message': 'Cannot cancel someone else\'s booking'
-                },
+                'error': {'code': 4, 'message': 'Cannot cancel someone else\'s booking'},
                 'id': id
             }
-        conn.execute('UPDATE offices SET tenant = "" WHERE number = ?', (office_number,))
-        conn.commit()
-        conn.close()
+
+        cur.execute(
+            "UPDATE offices SET tenant = %s WHERE number = %s" if current_app.config['DB_TYPE'] == 'postgres'
+            else "UPDATE offices SET tenant = ? WHERE number = ?",
+            ('', office_number)
+        )
+        db_close(conn, cur)
 
         return {
             'jsonrpc': '2.0',
             'result': 'success',
             'id': id
         }
+
     return {
         'jsonrpc': '2.0',
-        'error': {
-            'code': -32601,
-            'message': 'Method not found'
-        },
+        'error': {'code': -32601, 'message': 'Method not found'},
         'id': id
     }
