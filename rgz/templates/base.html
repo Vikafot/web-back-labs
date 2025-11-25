@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фот Виктория. Предложение услуг.</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}">
+    {% block script %}{% endblock %}
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="header-title">WEB-программирование, часть 2. Предложение услуг</div>
+            <ul class="header-menu">
+                {% if session.get('login') %}
+                    <li><a href="/logout">Выход</a></li>
+                {% else %}
+                    <li><a href="/login">Вход</a></li>
+                    <li><a href="/register">Регистрация</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        {% block main %}{% endblock %}
+    </main>
+    <ul>
+        <li><a href="/">Главное меню</a></li>
+    </ul>
+
+    <footer>
+        &copy; Фот Виктория, ФБИ-33, 3 курс, 2025
+    </footer>
+</body>
+</html>

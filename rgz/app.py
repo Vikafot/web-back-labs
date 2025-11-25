@@ -1,8 +1,9 @@
 import os
-from flask import Flask
+from flask import Flask, render_template
 from werkzeug.security import generate_password_hash
 from dotenv import load_dotenv
 from models.db_model import db, User
+from routes import main, auth
 
 load_dotenv()
 
@@ -28,12 +29,12 @@ def create_app():
                 create_admin()
             _initialized = True
 
-    @app.route('/')
-    def index():
-        return "Приложение работает! ФИО: Фот Виктория Владимировна | Группа: ФБИ-33"
-
+    register_blueprints(app)
     return app
 
+def register_blueprints(app):
+    app.register_blueprint(main)
+    app.register_blueprint(auth)
 
 def create_admin():
     if not User.query.filter_by(username=ADMIN_USERNAME).first():

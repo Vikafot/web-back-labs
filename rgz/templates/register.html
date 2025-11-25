@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block main %}
+<div class="register-container">
+    <h1>Регистрация</h1>
+    <form action="/register" method="post">
+        <div class="form-group">
+            <label for="login">Логин:</label>
+            <input type="text" id="login" name="login" value="{{ request.form.login or '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+
+        <div class="form-group">
+            <label for="name">Ваше имя (ФИО):</label>
+            <input type="text" id="name" name="name" value="{{ request.form.name or '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="service_type">Вид услуги:</label>
+            <select id="service_type" name="service_type" required>
+                <option value="">-- Выберите --</option>
+                <option value="репетитор" {% if request.form.service_type == 'репетитор' %}selected{% endif %}>Репетитор</option>
+                <option value="бухгалтер" {% if request.form.service_type == 'бухгалтер' %}selected{% endif %}>Бухгалтер</option>
+                <option value="программист" {% if request.form.service_type == 'программист' %}selected{% endif %}>Программист</option>
+                <option value="дизайнер" {% if request.form.service_type == 'дизайнер' %}selected{% endif %}>Дизайнер</option>
+                <option value="юрист" {% if request.form.service_type == 'юрист' %}selected{% endif %}>Юрист</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="experience">Стаж (в годах):</label>
+            <input type="number" id="experience" name="experience" value="{{ request.form.experience or '' }}" min="0" required>
+        </div>
+
+        <div class="form-group">
+            <label for="price">Цена за услугу (руб/час):</label>
+            <input type="number" id="price" name="price" value="{{ request.form.price or '' }}" min="1" required>
+        </div>
+
+        <div class="form-group">
+            <label for="about">О себе (необязательно):</label>
+            <textarea id="about" name="about">{{ request.form.about or '' }}</textarea>
+        </div>
+
+        {% if error %}
+        <div class="error-message">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <button type="submit" class="submit-btn">Зарегистрироваться</button>
+    </form>
+</div>
+{% endblock %}
