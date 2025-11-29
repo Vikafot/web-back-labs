@@ -32,15 +32,46 @@ def settings_handler(user_id=None):
             return redirect('/settings')
 
         if 'update_profile' in request.form:
-            target_user.name = request.form.get('name', '').strip()
-            target_user.service_type = request.form.get('service_type', '').strip()
-            target_user.experience = int(request.form.get('experience') or 0)
-            target_user.price = int(request.form.get('price') or 0)
-            target_user.about = request.form.get('about', '').strip()
-            target_user.is_visible = 'is_visible' in request.form
+            name = request.form.get('name', '').strip()
+            service_type = request.form.get('service_type', '').strip()
+            experience = request.form.get('experience', '').strip()
+            price = request.form.get('price', '').strip()
+            about = request.form.get('about', '').strip()
+            is_visible = 'is_visible' in request.form
+
+            if not (name and service_type and experience and price):
+                message = "Заполните все обязательные поля"
+                message_type = "error"
+                return render_template(
+                    'settings.html',
+                    user=target_user,
+                    message=message,
+                    message_type=message_type,
+                    is_admin_edit=is_admin_edit
+                )
             
-            if current_user.is_admin:
-                target_user.is_admin = 'is_admin' in request.form
+            try:
+                experience = int(experience)
+                price = int(price)
+                if experience < 0 or price <= 0:
+                    raise ValueError
+            except ValueError:
+                message = "Стаж должен быть >= 0, цена > 0"
+                message_type = "error"
+                return render_template(
+                    'settings.html',
+                    user=target_user,
+                    message=message,
+                    message_type=message_type,
+                    is_admin_edit=is_admin_edit
+                )
+
+            target_user.name = name
+            target_user.service_type = service_type
+            target_user.experience = experience
+            target_user.price = price
+            target_user.about = about
+            target_user.is_visible = is_visible
 
             db.session.commit()
             message = "Анкета успешно обновлена"
@@ -49,8 +80,10 @@ def settings_handler(user_id=None):
         elif 'delete_account' in request.form:
             db.session.delete(target_user)
             db.session.commit()
-            if not is_admin_edit:
+            is_self_deletion = (target_user.id == current_user.id)
+            if is_self_deletion:
                 session.pop('login', None)
+                session.pop('is_admin', None)
             return redirect('/')
 
     return render_template(

@@ -81,4 +81,5 @@ def login():
 @auth.route('/logout')
 def logout():
     session.pop('login', None)
+    session.pop('is_admin', None)
     return redirect('/')
