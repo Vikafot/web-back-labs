@@ -1,1 +1,11 @@
 {% extends "base.html" %}
+
+{% block main %}
+<h1>Все исполнители</h1>
+
+{% for user in all_users %}
+{% include 'components/user-card.html' %}
+{% else %}
+<p>Пока нет анкет.</p>
+{% endfor %}
+{% endblock %}

@@ -3,14 +3,12 @@ from flask import Flask, render_template
 from werkzeug.security import generate_password_hash
 from dotenv import load_dotenv
 from models.db_model import db, User
-from routes import main, auth
-
+from routes import main, auth, settings, search
+from generate_users import generate_users
 load_dotenv()
 
 ADMIN_USERNAME = os.getenv('ADMIN_USERNAME', 'admin')
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
-
-_initialized = False
 
 def create_app():
     app = Flask(__name__)
@@ -20,23 +18,28 @@ def create_app():
 
     db.init_app(app)
 
-    @app.before_request
-    def initialize_app():
-        global _initialized
-        if not _initialized:
-            with app.app_context():
-                db.create_all()
-                create_admin()
-            _initialized = True
-
     register_blueprints(app)
+
+    with app.app_context():
+        db.create_all()
+        generate_users()
+        create_admin()
+
+    @app.errorhandler(404)
+    def not_found(error):
+        return render_template('404.html'), 404
+
     return app
 
 def register_blueprints(app):
     app.register_blueprint(main)
     app.register_blueprint(auth)
+    app.register_blueprint(settings)
+    app.register_blueprint(search)
 
 def create_admin():
+    if not ADMIN_PASSWORD:
+        return
     if not User.query.filter_by(username=ADMIN_USERNAME).first():
         admin = User(
             username=ADMIN_USERNAME,

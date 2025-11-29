@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, session, current_app
+from flask import Blueprint, render_template, redirect, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from models.db_model import db, User
 
@@ -37,6 +37,7 @@ def register():
     new_user = User(
         username=login,
         password_hash=generate_password_hash(password),
+        is_admin=False,
         name=name,
         service_type=service_type,
         experience=experience,
@@ -49,6 +50,7 @@ def register():
     db.session.commit()
 
     session['login'] = login
+    session['is_admin'] = False
     return redirect('/')
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -73,6 +75,7 @@ def login():
         return render_template('login.html', error='Логин и/или пароль неверны')
     
     session['login'] = login
+    session['is_admin'] = user.is_admin
     return redirect('/')
 
 @auth.route('/logout')

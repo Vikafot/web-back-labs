@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block main %}
+<h1>Поиск исполнителей</h1>
+
+<form method="GET" class="edit-form">
+    <div class="form-group">
+        <label for="name">ФИО (полностью или частично):</label>
+        <input type="text" id="name" name="name" value="{{ name or '' }}">
+    </div>
+
+    <div class="form-group">
+        <label for="service_type">Вид работы:</label>
+        <input type="text" id="service_type" name="service_type" value="{{ service_type or '' }}">
+    </div>
+
+    <div class="form-group">
+        <label>Стаж (лет):</label>
+        <input type="number" name="exp_from" value="{{ exp_from or '' }}" placeholder="От" min="0" style="width: 49%;">
+        <input type="number" name="exp_to" value="{{ exp_to or '' }}" placeholder="До" min="0" style="width: 49%;">
+    </div>
+
+    <div class="form-group">
+        <label>Цена за час (₽):</label>
+        <input type="number" name="price_from" value="{{ price_from or '' }}" placeholder="От" min="0"
+            style="width: 49%;">
+        <input type="number" name="price_to" value="{{ price_to or '' }}" placeholder="До" min="0" style="width: 49%;">
+    </div>
+
+    <button type="submit" class="submit-btn">Найти</button>
+</form>
+
+{% if results %}
+<h2>Результаты поиска</h2>
+{% for user in results %}
+{% include 'components/user-card.html' %}
+{% endfor %}
+
+{% if pagination.pages > 1 %}
+<div style="text-align: center; margin: 2rem 0; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+    {% if pagination.has_prev %}
+    <a href="{{ url_for('search.search_handler',
+                    name=name, service_type=service_type,
+                    exp_from=exp_from, exp_to=exp_to,
+                    price_from=price_from, price_to=price_to,
+                    page=pagination.prev_num) }}" class="submit-btn"
+        style="text-decoration: none; padding: 0.5rem 1rem; display: inline-block;">
+        Назад
+    </a>
+    {% endif %}
+
+    <span style="align-self: center; color: #555;">
+        Страница {{ pagination.page }} из {{ pagination.pages }}
+    </span>
+
+    {% if pagination.has_next %}
+    <a href="{{ url_for('search.search_handler',
+                    name=name, service_type=service_type,
+                    exp_from=exp_from, exp_to=exp_to,
+                    price_from=price_from, price_to=price_to,
+                    page=pagination.next_num) }}" class="submit-btn"
+        style="text-decoration: none; padding: 0.5rem 1rem; display: inline-block; background-color: #28a745;">
+        Следующие
+    </a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% elif request.args %}
+<p>По вашему запросу ничего не найдено.</p>
+{% endif %}
+{% endblock %}

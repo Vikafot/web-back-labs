@@ -14,8 +14,12 @@
             <div class="header-title">WEB-программирование, часть 2. Предложение услуг</div>
             <ul class="header-menu">
                 {% if session.get('login') %}
+                    <span>{{ session.get('login') }}</span>
+                    <li><a href="{{ url_for('search.search_handler') }}">Поиск</a></li>
+                    <li><a href="/settings">Настройки</a></li>
                     <li><a href="/logout">Выход</a></li>
                 {% else %}
+                    <li><a href="{{ url_for('search.search_handler') }}">Поиск</a></li>
                     <li><a href="/login">Вход</a></li>
                     <li><a href="/register">Регистрация</a></li>
                 {% endif %}
@@ -27,7 +31,7 @@
         {% block main %}{% endblock %}
     </main>
     <ul>
-        <li><a href="/">Главное меню</a></li>
+        <li><a href="/">Главная</a></li>
     </ul>
 
     <footer>

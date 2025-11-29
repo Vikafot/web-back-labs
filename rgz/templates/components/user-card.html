@@ -1,0 +1,12 @@
+<div class="card-item">
+    {% if session.get('is_admin') %}
+        <span><a href="{{ url_for('settings.settings_handler', user_id=user.id) }}">Редактировать</a></span>
+    {% endif %}
+    <h3>{{ user.name }}</h3>
+    <p><strong>Услуга:</strong> {{ user.service_type }}</p>
+    <p><strong>Стаж:</strong> {{ user.experience }} лет</p>
+    <p><strong>Цена:</strong> {{ user.price }} ₽/час</p>
+    {% if user.about %}
+        <p>{{ user.about | truncate(120) }}</p>
+    {% endif %}
+</div>

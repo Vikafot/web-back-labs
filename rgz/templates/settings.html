@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block main %}
+<div class="edit-form">
+    <h1>Настройки профиля</h1>
+    {% if message %}
+    <div class="error-message" style="
+            background-color: {% if message_type == 'success' %}#d4edda{% elif message_type == 'info' %}#d1ecf1{% else %}#ffebee{% endif %};
+            color: {% if message_type == 'success' %}#155724{% elif message_type == 'info' %}#0c5460{% else %}#721c24{% endif %};
+            border-left: 4px solid {% if message_type == 'success' %}#28a745{% else %}#d32f2f{% endif %};
+        ">
+        {{ message }}
+    </div>
+    {% endif %}
+    <form method="POST">
+        <input type="hidden" name="update_profile" value="1">
+
+        <div class="form-group">
+            <label for="name">Имя:</label>
+            <input type="text" id="name" name="name" value="{{ user.name or '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="service_type">Тип услуги:</label>
+            <input id="service_type" name="service_type" value="{{ user.service_type or '' }}" required />
+        </div>
+
+        <div class="form-group">
+            <label for="experience">Опыт (лет):</label>
+            <input type="number" id="experience" name="experience" value="{{ user.experience or 0 }}" min="0">
+        </div>
+
+        <div class="form-group">
+            <label for="price">Цена (в час):</label>
+            <input type="number" id="price" name="price" value="{{ user.price or 0 }}" min="0">
+        </div>
+
+        <div class="form-group">
+            <label for="about">О себе:</label>
+            <textarea id="about" name="about" rows="4">{{ user.about or '' }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label>
+                Показывать анкету в поиске
+                <input type="checkbox" name="is_visible" {% if user.is_visible %}checked{% endif %}>
+            </label>
+        </div>
+
+        <button type="submit" class="submit-btn">Сохранить изменения</button>
+    </form>
+
+    <hr style="margin: 2rem 0; border-color: #eee;">
+
+    <h2 style="color: #2c3e50; margin-top: 2rem;">Удаление аккаунта</h2>
+    <p>Внимание: это действие нельзя отменить. Все данные будут безвозвратно удалены.</p>
+    <form method="POST" onsubmit="return confirm('Вы уверены, что хотите удалить аккаунт?');">
+        <input type="hidden" name="delete_account" value="1">
+        <button type="submit" class="submit-btn" style="background-color: #d32f2f;">Удалить аккаунт</button>
+    </form>
+</div>
+{% endblock %}

@@ -21,14 +21,7 @@
 
         <div class="form-group">
             <label for="service_type">Вид услуги:</label>
-            <select id="service_type" name="service_type" required>
-                <option value="">-- Выберите --</option>
-                <option value="репетитор" {% if request.form.service_type == 'репетитор' %}selected{% endif %}>Репетитор</option>
-                <option value="бухгалтер" {% if request.form.service_type == 'бухгалтер' %}selected{% endif %}>Бухгалтер</option>
-                <option value="программист" {% if request.form.service_type == 'программист' %}selected{% endif %}>Программист</option>
-                <option value="дизайнер" {% if request.form.service_type == 'дизайнер' %}selected{% endif %}>Дизайнер</option>
-                <option value="юрист" {% if request.form.service_type == 'юрист' %}selected{% endif %}>Юрист</option>
-            </select>
+            <input id="service_type" name="service_type" required />
         </div>
 
         <div class="form-group">
