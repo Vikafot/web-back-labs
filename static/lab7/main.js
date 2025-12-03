@@ -17,6 +17,10 @@ function fillFilmList() {
                 tdTitleRus.innerText = film.title_ru;
                 tdYear.innerText = film.year;
 
+                const editButton = document.createElement('button');
+                editButton.innerText = 'редактировать';
+                editButton.onclick = () => editFilm(index);
+
                 const delButton = document.createElement('button');
                 delButton.innerText = 'удалить';
                 delButton.onclick = () => deleteFilm(index, film.title_ru);
@@ -45,12 +49,12 @@ function deleteFilm(index, title) {
     fetch(`/lab7/rest-api/films/${index}`, {
         method: 'DELETE'
     })
-    .then(() => {
-        fillFilmList();
-    })
-    .catch(error => {
-        console.error('Ошибка при удалении фильма:', error);
-    });
+        .then(() => {
+            fillFilmList();
+        })
+        .catch(error => {
+            console.error('Ошибка при удалении фильма:', error);
+        });
 }
 
 function showModal() {
@@ -74,6 +78,21 @@ function addFilm() {
     showModal();
 }
 
+function editFilm(index) {
+    fetch(`/lab7/rest-api/films/${index}`)
+        .then(data => {
+            return data.json();
+        })
+        .then(film => {
+            document.getElementById('id').value = index;
+            document.getElementById('title').value = film.title || '';
+            document.getElementById('title-ru').value = film.title_ru;
+            document.getElementById('year').value = film.year;
+            document.getElementById('description').value = film.description || '';
+            showModal();
+        })
+}
+
 function sendFilm() {
     const id = document.getElementById('id').value;
     const film = {
@@ -88,25 +107,28 @@ function sendFilm() {
         return;
     }
 
-    fetch('/lab7/rest-api/films/', {
-        method: 'POST',
+    const url = id === '' ? '/lab7/rest-api/films/' : `/lab7/rest-api/films/${id}`;
+    const method = id === '' ? 'POST' : 'PUT';
+
+    fetch(url, {
+        method: method,
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(film)
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Ошибка при сохранении фильма');
-        }
-        return response;
-    })
-    .then(() => {
-        hideModal();
-        fillFilmList();
-    })
-    .catch(error => {
-        console.error('Ошибка:', error);
-        alert('Не удалось сохранить фильм. Проверьте данные.');
-    });
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Ошибка при сохранении фильма');
+            }
+            return response;
+        })
+        .then(() => {
+            hideModal();
+            fillFilmList();
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Не удалось сохранить фильм. Проверьте данные.');
+        });
 }
