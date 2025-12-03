@@ -1,3 +1,4 @@
+// === Заполнение таблицы фильмами ===
 function fillFilmList() {
     fetch('/lab7/rest-api/films/')
         .then(function (response) {
@@ -15,18 +16,26 @@ function fillFilmList() {
                 let tdYear = document.createElement('td');
                 let tdActions = document.createElement('td');
 
-                tdTitle.innerText = films[i].title == films[i].title_ru ? '' : films[i].title;
+                // Заполнение ячеек
+                tdTitle.innerText = films[i].title === films[i].title_ru ? '' : films[i].title;
                 tdTitleRus.innerText = films[i].title_ru;
                 tdYear.innerText = films[i].year;
 
+                // Кнопка "редактировать"
                 let editButton = document.createElement('button');
                 editButton.innerText = 'редактировать';
-                editButton.onclick = function () { editFilm(i); };
+                editButton.onclick = function () {
+                    editFilm(i);
+                };
 
+                // Кнопка "удалить"
                 let delButton = document.createElement('button');
                 delButton.innerText = 'удалить';
-                delButton.onclick = function () { deleteFilm(i, films[i].title_ru); };
+                delButton.onclick = function () {
+                    deleteFilm(i, films[i].title_ru);
+                };
 
+                // Сборка строки
                 tdActions.appendChild(editButton);
                 tdActions.appendChild(delButton);
 
@@ -38,4 +47,29 @@ function fillFilmList() {
                 tbody.appendChild(tr);
             }
         })
+        .catch(function (error) {
+            console.error('Ошибка при загрузке списка фильмов:', error);
+        });
+}
+
+// === Удаление фильма ===
+function deleteFilm(id, title) {
+    if (!confirm(`Вы точно хотите удалить фильм "${title}"?`)) {
+        return;
+    }
+
+    fetch(`/lab7/rest-api/films/${id}`, {
+        method: 'DELETE'
+    })
+    .then(function () {
+        fillFilmList(); // Обновляем таблицу после удаления
+    })
+    .catch(function (error) {
+        console.error('Ошибка при удалении фильма:', error);
+    });
+}
+
+// === Редактирование фильма (заглушка для раздела 9) ===
+function editFilm(id) {
+    alert('Редактирование фильма с id = ' + id + ' (будет реализовано в разделе 11)');
 }
