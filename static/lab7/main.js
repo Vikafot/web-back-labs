@@ -5,7 +5,7 @@ function fillFilmList() {
             const tbody = document.getElementById('film-list');
             tbody.innerHTML = '';
 
-            films.forEach((film, index) => {
+            films.forEach(film => {
                 const tr = document.createElement('tr');
 
                 const tdTitleRus = document.createElement('td');
@@ -25,11 +25,11 @@ function fillFilmList() {
 
                 const editBtn = document.createElement('button');
                 editBtn.innerText = 'редактировать';
-                editBtn.onclick = () => editFilm(index);
+                editBtn.onclick = () => editFilm(film.id);
 
                 const delBtn = document.createElement('button');
                 delBtn.innerText = 'удалить';
-                delBtn.onclick = () => deleteFilm(index, film.title_ru);
+                delBtn.onclick = () => deleteFilm(film.id, film.title_ru);
 
                 tdActions.appendChild(editBtn);
                 tdActions.appendChild(delBtn);
