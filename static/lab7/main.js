@@ -46,12 +46,8 @@ function deleteFilm(index, title) {
         return;
     }
 
-    fetch(`/lab7/rest-api/films/${index}`, {
-        method: 'DELETE'
-    })
-        .then(() => {
-            fillFilmList();
-        })
+    fetch(`/lab7/rest-api/films/${index}`, { method: 'DELETE' })
+        .then(() => fillFilmList())
         .catch(error => {
             console.error('Ошибка при удалении фильма:', error);
         });
@@ -59,6 +55,7 @@ function deleteFilm(index, title) {
 
 function showModal() {
     document.querySelector('div.modal').style.display = 'block';
+    document.getElementById('description-error').innerText = '';
 }
 
 function hideModal() {
@@ -80,17 +77,19 @@ function addFilm() {
 
 function editFilm(index) {
     fetch(`/lab7/rest-api/films/${index}`)
-        .then(data => {
-            return data.json();
-        })
+        .then(response => response.json())
         .then(film => {
             document.getElementById('id').value = index;
             document.getElementById('title').value = film.title || '';
-            document.getElementById('title-ru').value = film.title_ru;
-            document.getElementById('year').value = film.year;
+            document.getElementById('title-ru').value = film.title_ru || '';
+            document.getElementById('year').value = film.year || '';
             document.getElementById('description').value = film.description || '';
             showModal();
         })
+        .catch(error => {
+            console.error('Ошибка загрузки фильма:', error);
+            alert('Не удалось загрузить данные фильма.');
+        });
 }
 
 function sendFilm() {
@@ -102,33 +101,42 @@ function sendFilm() {
         description: document.getElementById('description').value.trim()
     };
 
-    if (!film.title_ru || !film.year) {
-        alert('Пожалуйста, заполните обязательные поля: название на русском и год.');
+    if (!film.title_ru || isNaN(film.year) || film.year < 1895 || film.year > new Date().getFullYear()) {
+        alert('Пожалуйста, заполните корректно:\n— Название на русском\n— Год (от 1895 до текущего)');
         return;
     }
+
+    if (!film.description) {
+        document.getElementById('description-error').innerText = 'Заполните описание';
+        return; 
+    }
+
+    document.getElementById('description-error').innerText = '';
 
     const url = id === '' ? '/lab7/rest-api/films/' : `/lab7/rest-api/films/${id}`;
     const method = id === '' ? 'POST' : 'PUT';
 
     fetch(url, {
         method: method,
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(film)
     })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Ошибка при сохранении фильма');
-            }
-            return response;
-        })
-        .then(() => {
+    .then(response => {
+        if (response.ok) {
+            return {};
+        }
+        return response.json().catch(() => ({ description: 'Неизвестная ошибка сервера' }));
+    })
+    .then(data => {
+        if (data && data.description) {
+            document.getElementById('description-error').innerText = data.description;
+        } else {
             hideModal();
             fillFilmList();
-        })
-        .catch(error => {
-            console.error('Ошибка:', error);
-            alert('Не удалось сохранить фильм. Проверьте данные.');
-        });
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка при отправке данных:', error);
+        document.getElementById('description-error').innerText = 'Не удалось связаться с сервером.';
+    });
 }

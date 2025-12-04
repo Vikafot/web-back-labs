@@ -46,30 +46,43 @@ films = [
 def get_films():
     return jsonify(films)
 
-@lab7.route('/lab7/rest-api/films/<int:id>', methods=['GET'])
+@lab7.route('/lab7/rest-api/films/<int:id>/', methods=['GET'])
 def get_film(id):
     if id < 0 or id >= len(films):
         return jsonify({"error": "Film not found"}), 404
     return jsonify(films[id])
 
-@lab7.route('/lab7/rest-api/films/<int:id>', methods=['DELETE'])
+@lab7.route('/lab7/rest-api/films/<int:id>/', methods=['DELETE'])
 def del_film(id):
     if id < 0 or id >= len(films):
         return jsonify({"error": "Film not found"}), 404
     del films[id]
     return '', 204
 
-@lab7.route('/lab7/rest-api/films/<int:id>', methods=['PUT'])
-def put_film(id):
+@lab7.route('/lab7/rest-api/films/<int:id>/', methods=['PUT'])
+def edit_film(id):
     if id < 0 or id >= len(films):
         return jsonify({"error": "Film not found"}), 404
-    updated_film = request.get_json()
-    films[id] = updated_film
-    return jsonify(films[id]), 200
+    data = request.get_json()
+    if not data:
+        return jsonify({"description": "Некорректные данные"}), 400
+
+    description = data.get("description", "").strip()
+    if not description:
+        return jsonify({"description": "Описание обязательно"}), 400
+
+    films[id] = data
+    return jsonify(films[id])
 
 @lab7.route('/lab7/rest-api/films/', methods=['POST'])
 def add_film():
-    new_film = request.get_json()
-    films.append(new_film)
-    return jsonify(len(films) - 1), 200
+    data = request.get_json()
+    if not data:
+        return jsonify({"description": "Некорректные данные"}), 400
 
+    description = data.get("description", "").strip()
+    if not description:
+        return jsonify({"description": "Описание обязательно"}), 400
+
+    films.append(data)
+    return jsonify(len(films) - 1)
