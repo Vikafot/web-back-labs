@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 8{% endblock %}
+
+{% block script %}
+<style>
+    .header {
+        background-color: #a0d2eb;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    .header h1 {
+        margin: 0;
+        color: #333;
+        font-size: 24px;
+    }
+
+    .nav-buttons {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .nav-button {
+        padding: 8px 15px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+    }
+
+    .nav-button:hover {
+        background-color: #e9ecef;
+    }
+
+    .user-info {
+        font-weight: bold;
+        color: #333;
+        padding: 8px 15px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="header">
+    <h1>База знаний</h1>
+    <div class="nav-buttons">
+        <a href="/lab8/articles" class="nav-button">Список статей</a>
+        <a href="/lab8/create" class="nav-button">Создать статью</a>
+        <a href="/lab8/login" class="nav-button">Войти</a>
+        <a href="/lab8/register" class="nav-button">Регистрация</a>
+        <div class="user-info">Пользователь: {{ username or 'anonymous' }}</div>
+    </div>
+</div>
+{% endblock %}
