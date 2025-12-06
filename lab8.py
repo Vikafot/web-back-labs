@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, session
 from db import db
 from db.models import users, articles
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_login import login_user, login_required, current_user
+from flask_login import login_user, login_required, current_user, logout_user
 lab8 = Blueprint('lab8', __name__,
                  static_folder='static',
                  template_folder='templates')
@@ -12,7 +12,7 @@ def lab8_index():
     username = "anonymous"
     return render_template('lab8/lab8.html', username=username)
 
-@lab8.route('/login')
+@lab8.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
         return render_template('lab8/login.html')
@@ -58,6 +58,11 @@ def register():
     new_user = users(login=login_form, password=password_hash)
     db.session.add(new_user)
     db.session.commit()
+    return redirect('/lab8')
+
+@lab8.route('/logout')
+def logout():
+    logout_user()
     return redirect('/lab8')
 
 @lab8.route('/articles')
