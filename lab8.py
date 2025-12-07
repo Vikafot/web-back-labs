@@ -4,6 +4,7 @@ from db.models import users, articles
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import login_user, login_required, current_user, logout_user
 from functools import wraps
+from sqlalchemy import desc
 lab8 = Blueprint('lab8', __name__,
                  static_folder='static',
                  template_folder='templates')
@@ -88,8 +89,8 @@ def articles_list():
 @lab8.route('/my_articles')
 @login_required
 def my_articles():
-    my_articles_list = articles.query.filter_by(login_id=current_user.id).all()
-    return render_template('lab8/my_articles.html', articles=my_articles_list)
+    my_sorted_articles = articles.query.filter_by(login_id=current_user.id).order_by(desc(articles.is_favorite)).all()
+    return render_template('lab8/my_articles.html', articles=my_sorted_articles)
 
 @lab8.route('/create', methods=['GET', 'POST'])
 @login_required
@@ -144,5 +145,13 @@ def edit_article(article_id):
     article.is_favorite = is_favorite
     article.is_public = is_public
 
+    db.session.commit()
+    return redirect('/lab8/my_articles')
+
+@lab8.route('/delete/<int:article_id>', methods=['POST'])
+@login_required
+def delete_article(article_id):
+    article = articles.query.filter_by(id=article_id, login_id=current_user.id).first_or_404()
+    db.session.delete(article)
     db.session.commit()
     return redirect('/lab8/my_articles')
