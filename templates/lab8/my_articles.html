@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 8{% endblock %}
+
+{% block main %}
+{% for article in articles %}
+<div class="article-item">
+    <h2>
+        {{ article.title }}
+        {% if article.is_favorite %}
+        <span style="color: gold; margin-left: 0.3rem;">★</span>
+        {% endif %}
+        {% if not article.is_public %}
+        <span title="Скрытая статья" style="color: #777; margin-left: 0.3rem;">🔒</span>
+        {% endif %}
+    </h2>
+    <blockquote>{{ article.article_text }}</blockquote>
+    <div style="margin-top: 0.5rem;">
+        <a href="/lab8/edit/{{ article.id }}" style="margin-right: 10px; color: #3498db;">Редактировать</a>
+        <form method="post" action="/lab8/delete/{{ article.id }}" style="display: inline;">
+            <button type="submit" style="background: none; border: none; color: #e74c3c; cursor: pointer;"
+                onclick="return confirm('Удалить статью?')">
+                Удалить
+            </button>
+        </form>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

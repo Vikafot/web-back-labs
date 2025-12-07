@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 8{% endblock %}
+
+{% block main %}
+<div class="create-article-form">
+    <h1>Редактирование статьи</h1>
+
+    <form method="post">
+        <div>
+            <label>
+                Название статьи:
+                <input type="text" name="title" value="{{ article.title }}" maxlength="50" required>
+            </label>
+        </div>
+
+        <div>
+            <textarea name="article_text" rows="10" cols="60" required>{{ article.article_text }}</textarea>
+        </div>
+
+        <div>
+            <label>
+                Избранная
+                <input type="checkbox" name="is_favorite" {% if article.is_favorite %}checked{% endif %}>
+            </label>
+        </div>
+
+        <div>
+            <label>
+                Публичная
+                <input type="checkbox" name="is_public" {% if article.is_public %}checked{% endif %}>
+            </label>
+        </div>
+
+        <div>
+            <button type="submit">Готово</button>
+        </div>
+
+        {% if error %}
+        <div class="error-message">
+            {{ error }}
+        </div>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}

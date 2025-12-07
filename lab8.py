@@ -85,6 +85,12 @@ def logout():
 def articles_list():
     return "Список статей"
 
+@lab8.route('/my_articles')
+@login_required
+def my_articles():
+    my_articles_list = articles.query.filter_by(login_id=current_user.id).all()
+    return render_template('lab8/my_articles.html', articles=my_articles_list)
+
 @lab8.route('/create', methods=['GET', 'POST'])
 @login_required
 def create_article():
@@ -114,3 +120,29 @@ def create_article():
     db.session.commit()
 
     return redirect('/lab8')
+
+@lab8.route('/edit/<int:article_id>', methods=['GET', 'POST'])
+@login_required
+def edit_article(article_id):
+    article = articles.query.filter_by(id=article_id, login_id=current_user.id).first_or_404()
+
+    if request.method == 'GET':
+        return render_template('/lab8/edit_article.html', article=article)
+
+    title = request.form.get('title', '').strip()
+    article_text = request.form.get('article_text', '').strip()
+    is_favorite = bool(request.form.get('is_favorite'))
+    is_public = bool(request.form.get('is_public'))
+
+    if not title:
+        return render_template('/lab8/edit.html', article=article, error='Заголовок не может быть пустым')
+    if not article_text:
+        return render_template('/lab8/edit.html', article=article, error='Текст не может быть пустым')
+
+    article.title = title
+    article.article_text = article_text
+    article.is_favorite = is_favorite
+    article.is_public = is_public
+
+    db.session.commit()
+    return redirect('/lab8/my_articles')
