@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 8{% endblock %}
+
+{% block main %}
+<h1>Публичные статьи</h1>
+{% if not articles %}
+    <p>Нет публичных статей.</p>
+{% else %}
+    {% for article, author_login in articles %}
+    <div class="article-item">
+        <h2>
+            {{ article.title }}
+        </h2>
+        <p><strong>Автор:</strong> {{ author_login }}</p>
+        <blockquote>{{ article.article_text }}</blockquote>
+    </div>
+    {% endfor %}
+{% endif %}
+{% endblock %}

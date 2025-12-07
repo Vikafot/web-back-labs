@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 8{% endblock %}
+
+{% block main %}
+    <h1>Поиск статей</h1>
+
+    <form method="get" style="margin-bottom: 20px;">
+        <input type="text" name="q" value="{{ query }}" placeholder="Введите фразу для поиска..." required
+               style="padding: 5px; width: 300px;">
+        <button type="submit">Найти</button>
+    </form>
+
+    {% if query %}
+        <p>Результаты поиска по запросу: <strong>"{{ query }}"</strong></p>
+
+        {% if not results %}
+            <p>Ничего не найдено.</p>
+        {% else %}
+            {% for article, author_login in results %}
+            <div class="article-item" style="border: 1px solid #ddd; padding: 10px; margin-bottom: 10px;">
+                <h3>{{ article.title }}</h3>
+                <p><strong>Автор:</strong> {{ author_login }}</p>
+                <blockquote>{{ article.article_text[:150] }}{% if article.article_text|length > 150 %}...{% endif %}</blockquote>
+                {% if not article.is_public %}
+                    <span style="color: #777; font-size: 0.9em;">🔒 Скрытая статья</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+{% endblock %}

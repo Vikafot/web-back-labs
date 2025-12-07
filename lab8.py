@@ -82,9 +82,13 @@ def logout():
     return redirect('/lab8')
 
 @lab8.route('/articles')
-@login_required
 def articles_list():
-    return "Список статей"
+    public_articles = db.session.query(articles, users.login.label('author_login')) \
+        .join(users, articles.login_id == users.id) \
+        .filter(articles.is_public == True) \
+        .order_by(articles.id.desc()) \
+        .all()
+    return render_template('lab8/articles.html', articles=public_articles)
 
 @lab8.route('/my_articles')
 @login_required
@@ -155,3 +159,48 @@ def delete_article(article_id):
     db.session.delete(article)
     db.session.commit()
     return redirect('/lab8/my_articles')
+
+@lab8.route('/search')
+def search():
+    query = request.args.get('q', '').strip()
+
+    if not query:
+        return render_template('/lab8/search.html', results=[], query=query)
+
+    search_pattern = f'%{query}%'
+
+    if current_user.is_authenticated:
+        my_articles = db.session.query(articles, users.login.label('author_login')) \
+            .join(users, articles.login_id == users.id) \
+            .filter(
+                articles.login_id == current_user.id,
+                db.or_(
+                    articles.title.ilike(search_pattern),
+                    articles.article_text.ilike(search_pattern)
+                )
+            )
+
+        public_articles = db.session.query(articles, users.login.label('author_login')) \
+            .join(users, articles.login_id == users.id) \
+            .filter(
+                articles.is_public == True,
+                db.or_(
+                    articles.title.ilike(search_pattern),
+                    articles.article_text.ilike(search_pattern)
+                )
+            )
+
+        combined = my_articles.union(public_articles)
+        results = combined.all()
+    else:
+        results = db.session.query(articles, users.login.label('author_login')) \
+            .join(users, articles.login_id == users.id) \
+            .filter(
+                articles.is_public == True,
+                db.or_(
+                    articles.title.ilike(search_pattern),
+                    articles.article_text.ilike(search_pattern)
+                )
+            ).all()
+
+    return render_template('/lab8/search.html', results=results, query=query)
