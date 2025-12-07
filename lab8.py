@@ -82,10 +82,35 @@ def logout():
 
 @lab8.route('/articles')
 @login_required
-def articles():
+def articles_list():
     return "Список статей"
 
-@lab8.route('/create')
+@lab8.route('/create', methods=['GET', 'POST'])
 @login_required
 def create_article():
-    return "Создание статьи"
+    if request.method == 'GET':
+        return render_template('lab8/create_article.html')
+
+    title = request.form.get('title')
+    article_text = request.form.get('article_text')
+    is_favorite = bool(request.form.get('is_favorite'))
+    is_public = bool(request.form.get('is_public'))
+
+    if not title or not title.strip():
+        return render_template('lab8/create_article.html', error='Заголовок не может быть пустым')
+    if not article_text or not article_text.strip():
+        return render_template('lab8/create_article.html', error='Текст статьи не может быть пустым')
+
+    new_article = articles(
+        login_id=current_user.id,
+        title=title.strip(),
+        article_text=article_text.strip(),
+        is_favorite=is_favorite,
+        is_public=is_public,
+        likes=0
+    )
+
+    db.session.add(new_article)
+    db.session.commit()
+
+    return redirect('/lab8')
