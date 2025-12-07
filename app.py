@@ -20,7 +20,7 @@ from lab8 import lab8
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'секретный ключ')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'secret_key')
 app.config['DB_TYPE'] = os.getenv('DB_TYPE', 'postgres')
 
 
