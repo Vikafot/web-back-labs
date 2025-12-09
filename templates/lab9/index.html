@@ -147,6 +147,21 @@
 {% block main %}
 <h1>🎁 Новогодние подарки!</h1>
 <div id="gift-container"></div>
+{% if is_authenticated %}
+<div style="margin-top: 15px;">
+    <button id="reset-button" style="padding: 8px 16px; background: #d40000; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        🎅 Дед Мороз!
+    </button>
+</div>
+<script>
+document.getElementById('reset-button').addEventListener('click', function() {
+    if (confirm('Все коробки будут закрыты. Продолжить?')) {
+        fetch('/lab9/api/reset_boxes', { method: 'POST' })
+            .then(() => location.reload());
+    }
+});
+</script>
+{% endif %}
 <div id="info">
     Осталось: <span id="remaining-count">10</span> подарков.
 </div>

@@ -1,24 +1,25 @@
-from flask import Blueprint, render_template, session, jsonify, request
+from flask import Blueprint, render_template, session, jsonify, request, redirect, url_for
+from flask_login import current_user, login_required
 import random
 from hashlib import md5
 import uuid
 
-lab9 = Blueprint('lab9', __name__)
+lab9 = Blueprint('lab9', __name__, template_folder='templates')
 
 OPENED_BOXES_GLOBAL = set()
 MAX_BOXES_PER_USER = 3
 
 GIFT_DATA = [
-    {"message": "С Новым годом! Пусть мечты сбываются!", "image": "/static/lab9/игрушка1.jpg"},
-    {"message": "Желаю здоровья, счастья и удачи!", "image": "/static/lab9/игрушка2.jpg"},
-    {"message": "Пусть в доме будет тепло, а в сердце — любовь!", "image": "/static/lab9/игрушка3.jpg"},
-    {"message": "Счастья тебе и вдохновения в новом году!", "image": "/static/lab9/игрушка4.jpg"},
-    {"message": "Пусть Дед Мороз исполнит все твои желания!", "image": "/static/lab9/игрушка5.jpg"},
-    {"message": "Новый год — время чудес! Пусть они начнутся с тебя!", "image": "/static/lab9/игрушка6.jpg"},
-    {"message": "Пусть удача будет твоим верным спутником!", "image": "/static/lab9/игрушка7.jpg"},
-    {"message": "Желаю радости, тепла и сказки в каждом дне!", "image": "/static/lab9/игрушка8.jpg"},
-    {"message": "Пусть настроение будет праздничным весь год!", "image": "/static/lab9/игрушка9.jpg"},
-    {"message": "С Новым годом! Пусть всё плохое останется в прошлом!", "image": "/static/lab9/игрушка10.jpg"},
+    {"message": "С Новым годом! Пусть мечты сбываются!", "image": "/static/lab9/игрушка1.jpg", "auth_only": False},
+    {"message": "Желаю здоровья, счастья и удачи!", "image": "/static/lab9/игрушка2.jpg", "auth_only": False},
+    {"message": "Пусть в доме будет тепло, а в сердце — любовь!", "image": "/static/lab9/игрушка3.jpg", "auth_only": False},
+    {"message": "Счастья тебе и вдохновения в новом году!", "image": "/static/lab9/игрушка4.jpg", "auth_only": False},
+    {"message": "Пусть Дед Мороз исполнит все твои желания!", "image": "/static/lab9/игрушка5.jpg", "auth_only": False},
+    {"message": "Новый год — время чудес! Пусть они начнутся с тебя!", "image": "/static/lab9/игрушка6.jpg", "auth_only": True},
+    {"message": "Пусть удача будет твоим верным спутником!", "image": "/static/lab9/игрушка7.jpg", "auth_only": True},
+    {"message": "Желаю радости, тепла и сказки в каждом дне!", "image": "/static/lab9/игрушка8.jpg", "auth_only": True},
+    {"message": "Пусть настроение будет праздничным весь год!", "image": "/static/lab9/игрушка9.jpg", "auth_only": False},
+    {"message": "С Новым годом! Пусть всё плохое останется в прошлом!", "image": "/static/lab9/игрушка10.jpg", "auth_only": False},
 ]
 
 def generate_positions_for_user(user_id, count=10, width=900, height=600, box_size=90):
@@ -28,7 +29,6 @@ def generate_positions_for_user(user_id, count=10, width=900, height=600, box_si
     occupied = []
     attempts = 0
     max_attempts = count * 100
-
     while len(positions) < count and attempts < max_attempts:
         x = rng.randint(0, width - box_size)
         y = rng.randint(0, height - box_size)
@@ -42,7 +42,6 @@ def generate_positions_for_user(user_id, count=10, width=900, height=600, box_si
             positions.append({"x": x, "y": y})
             occupied.append(new_rect)
         attempts += 1
-
     while len(positions) < count:
         x = rng.randint(0, width - box_size)
         y = rng.randint(0, height - box_size)
@@ -55,7 +54,8 @@ def gifts_page():
         session['user_id'] = str(uuid.uuid4())
     user_id = session['user_id']
     positions = generate_positions_for_user(user_id)
-    return render_template('lab9/index.html', positions=positions)
+    is_authenticated = current_user.is_authenticated
+    return render_template('lab9/index.html', positions=positions, is_authenticated=is_authenticated)
 
 @lab9.route('/api/open_gift', methods=['POST'])
 def open_gift():
@@ -71,6 +71,9 @@ def open_gift():
     box_index = data.get('box_index')
     if box_index is None or not (0 <= box_index <= 9):
         return jsonify({"error": "Неверный номер коробки"}), 400
+
+    if GIFT_DATA[box_index]["auth_only"] and not current_user.is_authenticated:
+        return jsonify({"error": "Этот подарок доступен только авторизованным пользователям!"}), 403
 
     if box_index in OPENED_BOXES_GLOBAL:
         return jsonify({"error": "Эта коробка уже открыта другим пользователем!"}), 400
@@ -91,3 +94,11 @@ def gift_status():
         "opened_boxes": list(OPENED_BOXES_GLOBAL),
         "remaining": 10 - len(OPENED_BOXES_GLOBAL)
     })
+
+@lab9.route('/api/reset_boxes', methods=['POST'])
+@login_required
+def reset_boxes():
+    global OPENED_BOXES_GLOBAL
+    OPENED_BOXES_GLOBAL = set()
+    session['opened_boxes'] = []
+    return jsonify({"success": True})
