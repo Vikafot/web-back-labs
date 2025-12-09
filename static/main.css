@@ -303,3 +303,40 @@ th {
     border-radius: 10px;
     cursor: pointer;
 }
+
+#gift-container {
+    position: relative;
+    height: 70vh;
+    margin: 20px 0;
+}
+
+.gift-box {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background: url('/static/lab9/box.png') no-repeat center;
+    background-size: contain;
+    cursor: pointer;
+    border: 2px solid gold;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+}
+
+.gift-box.opened {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+#info {
+    margin: 15px 0;
+    font-size: 1.1em;
+}
+
+#message {
+    margin-top: 20px;
+    padding: 15px;
+    background: #ffeb3b;
+    color: #000;
+    border-radius: 8px;
+    display: inline-block;
+}

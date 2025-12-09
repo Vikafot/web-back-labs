@@ -1,14 +1,153 @@
 {% extends "base.html" %}
 
-{% block lab %}
-    Лабораторная работа 9
-{% endblock %}
+{% block lab %} Лабораторная работа 9 {% endblock %}
 
 {% block script %}
+<style>
+    body {
+        background: #0a3c1e;
+        color: white;
+        font-family: 'Arial', sans-serif;
+        text-align: center;
+        padding: 20px;
+    }
+    #gift-container {
+        position: relative;
+        height: 70vh;
+        margin: 20px 0;
+    }
+    .gift-box {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        cursor: pointer;
+        border: 2px solid gold;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    .gift-box.opened {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+    .gift-popup {
+        position: absolute;
+        background: #ffeb3b;
+        padding: 12px;
+        border-radius: 10px;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+        max-width: 200px;
+        z-index: 20;
+        color: #000;
+        font-weight: normal;
+        text-align: center;
+    }
+    #info {
+        background: #0a3c1e;
+        padding: 4px;
+        border-radius: 16px;
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let currentPopup = null;
 
+        const container = document.getElementById('gift-container');
+        const positions = {{ positions | tojson }};
+
+        for (let i = 0; i < 10; i++) {
+            const box = document.createElement('div');
+            box.className = 'gift-box';
+            box.dataset.index = i;
+            box.style.left = positions[i].x + 'px';
+            box.style.top = positions[i].y + 'px';
+            box.style.backgroundImage = `url('/static/lab9/${i + 1}.png')`;
+            box.style.backgroundSize = 'contain';
+            box.style.backgroundRepeat = 'no-repeat';
+            box.style.backgroundPosition = 'center';
+            box.addEventListener('click', () => openBox(i));
+            container.appendChild(box);
+        }
+
+        fetch('/lab9/api/gift_status')
+            .then(r => r.json())
+            .then(data => {
+                data.opened_boxes.forEach(idx => {
+                    const b = document.querySelector(`.gift-box[data-index="${idx}"]`);
+                    if (b) b.classList.add('opened');
+                });
+                document.getElementById('remaining-count').textContent = data.remaining;
+            });
+
+        function openBox(index) {
+            const box = document.querySelector(`.gift-box[data-index="${index}"]`);
+            if (!box || box.classList.contains('opened')) return;
+
+            if (currentPopup && currentPopup.parentNode) {
+                currentPopup.remove();
+                currentPopup = null;
+            }
+
+            fetch('/lab9/api/open_gift', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ box_index: index })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                const popup = document.createElement('div');
+                popup.className = 'gift-popup';
+                popup.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong>🎁 Поздравление!</strong>
+                        <span style="cursor:pointer;font-weight:bold;" onclick="this.closest('.gift-popup').remove()">×</span>
+                    </div>
+                    <p style="margin:0;">${data.message}</p>
+                    <img src="${data.image}" style="max-width:150px; margin-top:8px; display:block;">
+                `;
+                popup.style.position = 'absolute';
+                popup.style.top = (parseInt(box.style.top) - 160) + 'px'; 
+                popup.style.left = (parseInt(box.style.left) - 35) + 'px';
+                popup.style.background = '#ffeb3b';
+                popup.style.padding = '12px';
+                popup.style.borderRadius = '10px';
+                popup.style.boxShadow = '0 6px 12px rgba(0,0,0,0.4)';
+                popup.style.maxWidth = '200px';
+                popup.style.zIndex = '20';
+                popup.style.color = '#000';
+                popup.style.fontWeight = 'normal';
+                popup.style.textAlign = 'center';
+
+                document.getElementById('gift-container').appendChild(popup);
+                currentPopup = popup;
+
+                box.classList.add('opened');
+                fetch('/lab9/api/gift_status')
+                    .then(r => r.json())
+                    .then(d => {
+                        document.getElementById('remaining-count').textContent = d.remaining;
+                    });
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Ошибка при открытии подарка');
+            });
+        }
+    });
+</script>
 {% endblock %}
 
 {% block main %}
-    <h1>Поздравления</h1>
+<h1>🎁 Новогодние подарки!</h1>
+<div id="gift-container"></div>
+<div id="info">
+    Осталось: <span id="remaining-count">10</span> подарков.
+</div>
 {% endblock %}
-
